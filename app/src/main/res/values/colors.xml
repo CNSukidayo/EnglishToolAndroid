@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorBlack">#000</color>
+    <color name="colorNotChooseJsonButtonGreen">#7AFF8B</color>
+    <color name="colorChooseJsonButtonRed">#FF2F6B</color>
+    <color name="colorChooseJsonCheckBoxBlue">#4AFFE6</color>
 </resources>
