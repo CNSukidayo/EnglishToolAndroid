@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
     <ListView
         android:id="@+id/homeJsonListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@null" />
+        android:divider="@null">
 
+    </ListView>
 </LinearLayout>

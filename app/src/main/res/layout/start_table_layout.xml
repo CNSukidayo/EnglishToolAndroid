@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="0,1">
+
+    <TableRow>
+
+        <Button
+            android:id="@+id/dictationModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="听写模式" />
+
+        <Button
+            android:id="@+id/chineseEnglishTranslationModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="中译英模式" />
+
+
+        <Button
+            android:id="@+id/allChose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全选" />
+
+    </TableRow>
+</TableLayout>

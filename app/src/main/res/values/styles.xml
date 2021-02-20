@@ -17,9 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="chooseJsonCheckBoxStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlActivated">@color/colorChooseJsonCheckBoxBlue</item>
+    <style name="chooseJsonCheckBoxStyle" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlActivated">@color/colorChooseJsonCheckBoxBlue</item>
+        <item name="android:colorControlNormal">@color/colorNotChooseJsonCheckBoxBlue</item>
     </style>
-
 
 </resources>

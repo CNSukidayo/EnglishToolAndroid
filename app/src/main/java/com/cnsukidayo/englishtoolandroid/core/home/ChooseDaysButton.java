@@ -1,15 +1,12 @@
 package com.cnsukidayo.englishtoolandroid.core.home;
 
-import android.graphics.drawable.ColorStateListDrawable;
-import android.graphics.drawable.Drawable;
-import android.text.Layout;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cnsukidayo.englishtoolandroid.R;
-import com.google.android.material.drawable.DrawableUtils;
+
+import java.io.File;
 
 /**
  * 选择第几天的符合组件
@@ -20,6 +17,23 @@ public class ChooseDaysButton {
     private TextView textView;
     private LinearLayout linearLayout;
     private boolean choseFlag = false;
+    // 当前天所对应的Json路径
+    private File thisDayJsonFile;
+    /**
+     * 改变当前选择日期按钮的状态
+     *
+     * @param status true则按钮选中,false则按钮不选中
+     */
+    public void changeChoseStatus(boolean status) {
+        choseFlag = status;
+        if (choseFlag) {
+            linearLayout.setBackgroundResource(R.drawable.json_linear_layout_choose);
+            checkBox.setChecked(true);
+        } else {
+            linearLayout.setBackgroundResource(R.drawable.json_linear_layout_not_choose);
+            checkBox.setChecked(false);
+        }
+    }
 
     public CheckBox getCheckBox() {
         return checkBox;
@@ -44,16 +58,19 @@ public class ChooseDaysButton {
     public void setLinearLayout(LinearLayout linearLayout) {
         this.linearLayout = linearLayout;
         linearLayout.setOnClickListener(v -> {
-            choseFlag = !choseFlag;
-            if (choseFlag) {
-                linearLayout.setBackgroundResource(R.color.colorChooseJsonButtonRed);
-                checkBox.setChecked(true);
-                checkBox.setBackgroundResource(R.color.colorChooseJsonCheckBoxBlue);
-            } else {
-                linearLayout.setBackgroundResource(R.color.colorNotChooseJsonButtonGreen);
-                checkBox.setChecked(false);
-            }
+            changeChoseStatus(!choseFlag);
         });
     }
 
+    public void setThisDayJsonFile(File thisDayJsonFile) {
+        this.thisDayJsonFile = thisDayJsonFile;
+    }
+
+    public File getThisDayJsonFile() {
+        return thisDayJsonFile;
+    }
+
+    public boolean isChoseFlag() {
+        return choseFlag;
+    }
 }

@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:paddingBottom="5dp"
-    android:paddingTop="5dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
     <LinearLayout
         android:id="@+id/chooseJsonLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/fillet_btn"
+        android:background="@drawable/json_linear_layout_not_choose"
         android:orientation="horizontal">
 
         <CheckBox
@@ -18,17 +18,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:clickable="false"
-            style="@style/chooseJsonCheckBoxStyle"/>
+            android:theme="@style/chooseJsonCheckBoxStyle"
+            />
 
         <TextView
             android:id="@+id/chooseJsonTextView"
-            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:textColor="@color/colorBlack"
+            android:layout_height="55dp"
+            android:gravity="center"
             android:text="sample"
-            />
+            android:textColor="@color/colorBlack"
+            android:textSize="30sp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -6,7 +6,6 @@ import android.os.storage.StorageManager;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
 
 public class GetPathUtils {
 

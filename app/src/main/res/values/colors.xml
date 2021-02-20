@@ -7,4 +7,5 @@
     <color name="colorNotChooseJsonButtonGreen">#7AFF8B</color>
     <color name="colorChooseJsonButtonRed">#FF2F6B</color>
     <color name="colorChooseJsonCheckBoxBlue">#4AFFE6</color>
+    <color name="colorNotChooseJsonCheckBoxBlue">@android:color/darker_gray</color>
 </resources>
