@@ -10,9 +10,13 @@
     <color name="colorNotChooseJsonCheckBoxBlue">@android:color/darker_gray</color>
     <color name="colorLeanPageBackGround">#6DFF56</color>
     <color name="colorTrueColor">#336DFF</color>
+    <color name="colorFalseColor">#FF0000</color>
     <color name="colorLightBlue">#0051FF</color>
     <color name="colorLightOrange">#FFD700</color>
     <color name="colorDottedLine">#FF78FA</color>
     <color name="colorDarkMagic">#B20DFF</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorThisFlagTrue">#41B01E</color>
+    <color name="colorThisFlagFalse">#FF695D</color>
+    <color name="colorStartFlagMode">#FF19E0</color>
 </resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <stroke
+                android:width="1dp"
+                android:color="@color/colorLightOrange" />
+            <corners
+                android:radius="4dp" />
+            <gradient
+                android:angle="270"
+                android:centerColor="#2AB923"
+                android:centerX="0.6"
+                android:centerY="0.6"
+                android:endColor="#24A01E"
+                android:startColor="@color/colorLeanPageBackGround" />
+        </shape>
+    </item>
+</layer-list>

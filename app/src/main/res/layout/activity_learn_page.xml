@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorLeanPageBackGround"
     android:orientation="vertical"
-    android:paddingTop="5dp"
     tools:context=".LearnPage">
 
     <TableLayout
@@ -15,7 +13,9 @@
         android:stretchColumns="0">
 
         <TableRow>
+
             <TextView
+                android:layout_marginStart="5dp"
                 android:id="@+id/result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -23,6 +23,7 @@
                 android:text="结果"
                 android:textColor="@color/colorBlack"
                 android:textSize="28sp" />
+
             <TextView
                 android:id="@+id/achievementTextView"
                 android:layout_width="match_parent"
@@ -32,6 +33,7 @@
                 android:text="正确"
                 android:textColor="@color/colorTrueColor"
                 android:textSize="28sp" />
+
             <TextView
                 android:id="@+id/progressTextView"
                 android:layout_width="wrap_content"
@@ -54,14 +56,15 @@
         <TableRow>
 
             <EditText
-                android:singleLine="true"
                 android:id="@+id/input"
+                android:layout_marginStart="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/input_fillet"
+                android:background="@drawable/english_input_fillet"
                 android:hint="在这里输入英文"
-                android:textCursorDrawable="@drawable/input_cursor"
+                android:singleLine="true"
                 android:textColor="@color/colorBlack"
+                android:textCursorDrawable="@drawable/input_cursor"
                 android:textSize="28sp" />
         </TableRow>
     </TableLayout>
@@ -117,9 +120,13 @@
                 android:id="@+id/markThisButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="标记当前" />
+                android:minHeight="35dp"
+                android:background="@drawable/flag_word_fillet"
+                android:text="标记单词" />
 
             <Button
+                android:layout_marginStart="3dp"
+                android:textColor="@color/colorBlack"
                 android:id="@+id/startMarkModeButton"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
@@ -130,5 +137,24 @@
         </TableRow>
 
     </TableLayout>
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clipChildren="false">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chineseInputRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </RelativeLayout>
+    </HorizontalScrollView>
+
 
 </LinearLayout>

@@ -1,24 +1,40 @@
 package com.cnsukidayo.englishtoolandroid.core.home;
 
+import android.os.Build;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+
 import com.cnsukidayo.englishtoolandroid.R;
+import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
+import com.cnsukidayo.englishtoolandroid.core.enums.PartOfSpeechEnum;
+import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 
 /**
  * 选择第几天的符合组件
  */
 public class ChooseDaysButton {
-
+    private String basePath;
     private CheckBox checkBox;
     private TextView textView;
     private LinearLayout linearLayout;
     private boolean choseFlag = false;
     // 当前天所对应的Json路径
     private File thisDayJsonFile;
+
     /**
      * 改变当前选择日期按钮的状态
      *
@@ -33,6 +49,37 @@ public class ChooseDaysButton {
             linearLayout.setBackgroundResource(R.drawable.json_linear_layout_not_choose);
             checkBox.setChecked(false);
         }
+    }
+
+    /**
+     * 得到当前按钮所对应的所有单词,注意如果当前天数没有被选中,返回的将是一个空集(而不是null)
+     *
+     * @param list 添加到哪个集合
+     * @return 返回的List保证不会空, 但有可能是空集.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void getThisDayWords(List<Word> list) {
+        if(!choseFlag){
+            return;
+        }
+        List<JSONObject> jsonObjects = parseJsonToJsonObjectArrayNotNull();
+        for (JSONObject jsonObject : jsonObjects) {
+            Word word = new Word();
+            word.setAllChineseMap(((Map<PartOfSpeechEnum, String>) jsonObject.get("allChineseMap", Map.class)));
+            word.setAudioPath(this.basePath + jsonObject.get("audioPath", String.class).replace("D:\\Java Project\\English Tool\\resource\\", ""));
+            word.setEnglish(jsonObject.get("english", String.class));
+            word.setDays(jsonObject.get("days", Integer.class));
+            word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
+            list.add(word);
+        }
+    }
+
+    /**
+     * @return 返回的List保证不会空, 但有可能是空集.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public List<JSONObject> parseJsonToJsonObjectArrayNotNull() {
+        return Optional.ofNullable(((JSONArray) JSONUtil.parse(JSONUtil.readJSON(thisDayJsonFile.getAbsoluteFile(), StandardCharsets.UTF_8))).toList(JSONObject.class)).orElse(Collections.emptyList());
     }
 
     public CheckBox getCheckBox() {
@@ -57,9 +104,7 @@ public class ChooseDaysButton {
 
     public void setLinearLayout(LinearLayout linearLayout) {
         this.linearLayout = linearLayout;
-        linearLayout.setOnClickListener(v -> {
-            changeChoseStatus(!choseFlag);
-        });
+        linearLayout.setOnClickListener(v -> changeChoseStatus(!choseFlag));
     }
 
     public void setThisDayJsonFile(File thisDayJsonFile) {
@@ -72,5 +117,9 @@ public class ChooseDaysButton {
 
     public boolean isChoseFlag() {
         return choseFlag;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
     }
 }

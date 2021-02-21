@@ -14,10 +14,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
+import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.home.HomeListViewAdapter;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.RandomUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +50,14 @@ public class MainActivity extends AppCompatActivity {
         // 中译英模式
         Button chineseEnglishTranslationModel = findViewById(R.id.chineseEnglishTranslationModel);
         chineseEnglishTranslationModel.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, LearnPage.class));
+            List<Word> allWords = homeListViewAdapter.getAllCheckWords();
+            // 打乱之后的集合
+            ArrayList<Word> randomList = randomEleList(allWords, allWords.size());
+            Intent intent = new Intent(MainActivity.this, LearnPage.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("randomList", randomList);
+            intent.putExtras(bundle);
+            startActivity(intent);
         });
         // 全选按钮
         Button allChose = findViewById(R.id.allChose);
@@ -66,5 +79,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    private <T> ArrayList<T> randomEleList(List<T> source, int count) {
+        final int[] randomList = ArrayUtil.sub(RandomUtil.randomInts(source.size()), 0, count);
+        ArrayList<T> result = new ArrayList<>();
+        for (int e : randomList) {
+            result.add(source.get(e));
+        }
+        return result;
+    }
+
 
 }

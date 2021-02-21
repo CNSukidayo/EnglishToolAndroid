@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:paddingTop="5dp">
+
+    <TableRow
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        >
+
+        <TextView
+            android:id="@+id/partOfSpeechTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="词性"
+            android:minEms="2"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/chineseInputText"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chinese_input_fillet"
+            android:hint="在这里输入中文"
+            android:singleLine="true"
+            android:textColor="@color/colorBlack"
+            android:textCursorDrawable="@drawable/input_cursor"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/chineseAnswerTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/chinese_answer_background"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="答答答答答答答答"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp" />
+    </TableRow>
+
+</TableLayout>
