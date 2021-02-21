@@ -1,6 +1,7 @@
 package com.cnsukidayo.englishtoolandroid;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 中译英模式
         Button chineseEnglishTranslationModel = findViewById(R.id.chineseEnglishTranslationModel);
-        chineseEnglishTranslationModel.setOnClickListener(9v -> homeListViewAdapter.printJson());
+        chineseEnglishTranslationModel.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, LearnPage.class));
+        });
         // 全选按钮
         Button allChose = findViewById(R.id.allChose);
         allChose.setOnClickListener(new View.OnClickListener() {
