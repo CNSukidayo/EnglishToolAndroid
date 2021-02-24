@@ -14,11 +14,8 @@ import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import cn.hutool.core.io.resource.ResourceUtil;
 
 public class HomeListViewAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
@@ -93,20 +90,17 @@ public class HomeListViewAdapter extends BaseAdapter {
     }
 
     /**
-     * 得到封装所有按钮的集合
+     * 判断当前用户至少选择了一天
      *
-     * @return 返回集合
+     * @return true:用户选择了一天 false:用户一天都没选择.
      */
-    public List<ChooseDaysButton> getAllChooseDaysButton() {
-        return allChooseDaysButton;
-    }
-
-    public void printJson() {
+    public boolean assertOneDay() {
         for (ChooseDaysButton chooseDaysButton : allChooseDaysButton) {
             if (chooseDaysButton.isChoseFlag()) {
-                System.out.println(ResourceUtil.readStr(chooseDaysButton.getThisDayJsonFile().getPath(), Charset.forName("UTF-8")));
+                return true;
             }
         }
+        return false;
     }
 
 }

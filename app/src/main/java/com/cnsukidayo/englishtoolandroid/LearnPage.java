@@ -1,19 +1,25 @@
 package com.cnsukidayo.englishtoolandroid;
 
+import android.content.Intent;
 import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
+import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
 
 import java.util.HashMap;
@@ -29,9 +35,15 @@ public class LearnPage extends AppCompatActivity {
     // 当前是标记模式的标记
     private boolean signFlag = false;
 
+    // 当前的模式状态码
+    private StartMod startMod;
     // RecyclerView的Adapter
     private LearnPageRecyclerView learnPageRecyclerView;
 
+    // 返回上一级按钮
+    private Button backButton;
+    // 是否允许可变宽度
+    private CheckBox canScrollContainerCheckBox;
     // 结果回显TextView
     private TextView englishAnswerTextView;
     // 显示正确或错误的结果TextView
@@ -47,7 +59,7 @@ public class LearnPage extends AppCompatActivity {
     // 下一个按钮
     private Button nextButton;
     // 暂停按钮
-
+    private Button stopButton;
     // 检查答案按钮
     private Button checkAnswersButton;
     // 标记单词按钮
@@ -55,6 +67,7 @@ public class LearnPage extends AppCompatActivity {
     // 开启标记模式按钮
     private Button startMarkModeButton;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +78,10 @@ public class LearnPage extends AppCompatActivity {
         chineseInputRecyclerView.setLayoutManager(linearLayoutManager);
         learnPageRecyclerView = new LearnPageRecyclerView(this);
         chineseInputRecyclerView.setAdapter(learnPageRecyclerView);
-        this.allWorlds = (List<Word>) (getIntent().getExtras().getSerializable("randomList"));
 
-        playerWriteWordsCache = new HashMap(100);
+        this.allWorlds = CacheQueue.SINGLE.get("allWords");
+        startMod = StartMod.valueOf(getIntent().getExtras().getString(StartMod.class.getName()));
+        playerWriteWordsCache = new HashMap<>(100);
         current = 0;
 
         checkAnswersButton = findViewById(R.id.checkAnswersButton);
@@ -78,8 +92,21 @@ public class LearnPage extends AppCompatActivity {
         preButton = findViewById(R.id.preButton);
         playButton = findViewById(R.id.playButton);
         nextButton = findViewById(R.id.nextButton);
+        stopButton = findViewById(R.id.stopButton);
         markThisButton = findViewById(R.id.markThisButton);
         startMarkModeButton = findViewById(R.id.startMarkModeButton);
+        backButton = findViewById(R.id.back);
+        canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            setResult(MainActivity.RESULT_OK,intent);
+            finish();
+        });
+        canScrollContainerCheckBox.setOnClickListener(v -> {
+            learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
+            onResume();
+        });
+        stopButton.setOnClickListener(v -> asyncPlayer.stop());
 
         // 检查结果按钮事件
         checkAnswersButton.setOnClickListener(v -> {
@@ -87,7 +114,7 @@ public class LearnPage extends AppCompatActivity {
             // 设置英文
             englishAnswerTextView.setText(answerText);
             // 比对英文是否正确
-            if (input.getText().equals(answerText)) {
+            if (input.getText().toString().equals(answerText)) {
                 achievementTextView.setText("正确");
                 achievementTextView.setTextColor(getResources().getColor(R.color.colorTrueColor));
             } else {
@@ -127,9 +154,13 @@ public class LearnPage extends AppCompatActivity {
             .setUsage(AudioAttributes.USAGE_MEDIA)
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .build();
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private View.OnClickListener getPlayClickListener() {
         if (playClickListener == null) {
             playClickListener = v -> {
+                // 缓存单词PE特有,先缓存当前写好的单词再切换
+                playerWriteWordsCache.put(current, learnPageRecyclerView.getWordFromInPutText());
                 switch (v.getId()) {
                     case R.id.preButton:
                         if (current == 0) {
@@ -154,10 +185,12 @@ public class LearnPage extends AppCompatActivity {
                         break;
                 }
                 // 不管怎样最终都要播放音效
-                asyncPlayer.play(getApplicationContext(),allWorlds.get(current).getAudioUri(),false, audioAttributes);
+                asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
+                // 加载新位置的单词
+                learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(current));
                 checkSign();
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
-                englishAnswerTextView.setText("");
+                startMod.englishAnswerValueHandle(allWorlds.get(current).getEnglish(), englishAnswerTextView);
                 achievementTextView.setText("");
                 learnPageRecyclerView.setAnswerLabelTextFromWord(null);
             };
@@ -165,22 +198,6 @@ public class LearnPage extends AppCompatActivity {
         return playClickListener;
     }
 
-    // todo 记忆单词+固定搭配和短语的换行+听写模式的判断
-    //
-//    private void saveWord() {
-//        Word word = new Word();
-//        word.setDays(1);
-//        word.setCategory(WordCategory.CORE);
-//        if (home.getMode() == Mode.INPUT) {
-//            word.setEnglish(allFiles[current].getName().substring(0, allFiles[current].getName().lastIndexOf('.')).replaceAll("[0-9]", ""));
-//            word.setAudioPath(allFiles[current].getPath());
-//        } else {
-//            word.setEnglish(input.getText().trim());
-//        }
-//        allChineseInput.setWordFromInPutText(word);
-//        words.put(current, word);
-//    }
-//
     private int find(int sign) {
         for (int i = current; i < allWorlds.size() && i > -1; i += sign) {
             if (allWorlds.get(i).isFlag()) {

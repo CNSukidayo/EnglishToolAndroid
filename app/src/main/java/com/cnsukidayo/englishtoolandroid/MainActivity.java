@@ -15,23 +15,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
+import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
+import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.home.HomeListViewAdapter;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.RandomUtil;
+
+import static com.cnsukidayo.englishtoolandroid.utils.RandomArrayUtils.randomEleList;
 
 public class MainActivity extends AppCompatActivity {
 
     private HomeListViewAdapter homeListViewAdapter;
+    // 听写模式
+    private Button dictationModel;
+    // 中译英模式
+    private Button chineseEnglishTranslationModel;
+    // 全选按钮
+    private Button allChose;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,29 +54,15 @@ public class MainActivity extends AppCompatActivity {
         homeJsonListView.setAdapter(this.homeListViewAdapter);
         homeJsonListView.addFooterView(LayoutInflater.from(this).inflate(R.layout.start_table_layout, null));
 
-        //
+        // 听写模式
+        dictationModel = findViewById(R.id.dictationModel);
+        dictationModel.setOnClickListener(getStartOnClickListener());
 
         // 中译英模式
-        Button chineseEnglishTranslationModel = findViewById(R.id.chineseEnglishTranslationModel);
-        chineseEnglishTranslationModel.setOnClickListener(v -> {
-            List<Word> allWords = homeListViewAdapter.getAllCheckWords();
-            try {
-                Assert.notEmpty(allWords, () -> new RuntimeException("用户没有选择任何一天!"));
-            } catch (RuntimeException e) {
-                Toast.makeText(getApplicationContext(), "点击按钮,请至少选择一天!", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-                return;
-            }
-            // 打乱之后的集合
-            ArrayList<Word> randomList = randomEleList(allWords, allWords.size());
-            Intent intent = new Intent(MainActivity.this, LearnPage.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("randomList", randomList);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        });
+        chineseEnglishTranslationModel = findViewById(R.id.chineseEnglishTranslationModel);
+        chineseEnglishTranslationModel.setOnClickListener(getStartOnClickListener());
         // 全选按钮
-        Button allChose = findViewById(R.id.allChose);
+        allChose = findViewById(R.id.allChose);
         allChose.setOnClickListener(new View.OnClickListener() {
             // true显示全不选 false显示全选
             private boolean flag = false;
@@ -86,16 +79,42 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
-    private <T> ArrayList<T> randomEleList(List<T> source, int count) {
-        final int[] randomList = ArrayUtil.sub(RandomUtil.randomInts(source.size()), 0, count);
-        ArrayList<T> result = new ArrayList<>();
-        for (int e : randomList) {
-            result.add(source.get(e));
+    private View.OnClickListener startOnClickListener;
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private View.OnClickListener getStartOnClickListener() {
+        if (startOnClickListener == null) {
+            startOnClickListener = v -> {
+                CacheQueue.SINGLE.doWork("allWords", () -> {
+                    List<Word> allWords = homeListViewAdapter.getAllCheckWords();
+                    return randomEleList(allWords, allWords.size());
+                });
+                try {
+                    Assert.isTrue(homeListViewAdapter.assertOneDay(), () -> new RuntimeException("用户没有选择任何一天!"));
+                } catch (RuntimeException e) {
+                    Toast.makeText(getApplicationContext(), "点击按钮,请至少选择一天!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                    return;
+                }
+                // 打乱之后的集合
+                Intent intent = new Intent(MainActivity.this, LearnPage.class);
+                Bundle bundle = new Bundle();
+                switch (v.getId()) {
+                    case R.id.dictationModel:
+                        bundle.putString(StartMod.class.getName(), StartMod.DICTATION.name());
+                        break;
+                    case R.id.chineseEnglishTranslationModel:
+                        bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
+                        break;
+                }
+
+                intent.putExtras(bundle);
+                startActivityForResult(intent,0);
+            };
         }
-        return result;
+        return startOnClickListener;
     }
 
 

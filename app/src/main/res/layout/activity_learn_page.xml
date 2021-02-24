@@ -5,21 +5,73 @@
     android:layout_height="match_parent"
     android:background="@color/colorLeanPageBackGround"
     android:orientation="vertical"
-    android:paddingTop="5dp"
     tools:context=".LearnPage">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="-5dp">
+        <Button
+            android:id="@+id/back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_fillet"
+            android:minHeight="35dp"
+            android:text="〈"
+            android:gravity="left|center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack" />
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5">
+
+        </View>
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="2.5"
+            android:orientation="horizontal">
+
+            <TableRow>
+                <CheckBox
+                    android:id="@+id/canScrollContainer"
+                    android:layout_gravity="center"
+                    android:checked="true"
+                    />
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_weight="6"
+                    android:layout_width="wrap_content"
+                    android:width="0dp"
+                    android:text="允许中文输入框自动延伸?"
+                    android:textColor="@color/colorBlack" />
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="0">
+        android:stretchColumns="0"
+        >
 
         <TableRow>
 
             <TextView
-                android:layout_marginStart="5dp"
                 android:id="@+id/result"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:background="@drawable/result_fillet"
                 android:text="结果"
                 android:textColor="@color/colorBlack"
@@ -58,9 +110,9 @@
 
             <EditText
                 android:id="@+id/input"
-                android:layout_marginStart="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:background="@drawable/english_input_fillet"
                 android:hint="在这里输入英文"
                 android:singleLine="true"
@@ -121,31 +173,35 @@
                 android:id="@+id/markThisButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="35dp"
                 android:background="@drawable/flag_word_fillet"
+                android:minHeight="35dp"
                 android:text="标记单词" />
 
             <Button
-                android:layout_marginStart="3dp"
-                android:textColor="@color/colorBlack"
                 android:id="@+id/startMarkModeButton"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
                 android:background="@drawable/stark_mark_fillet"
                 android:minHeight="35dp"
-                android:text="开启标记模式" />
+                android:text="开启标记模式"
+                android:textColor="@color/colorBlack" />
         </TableRow>
 
     </TableLayout>
+
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:clipChildren="false">
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:clipChildren="false">
+            android:clipChildren="false"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chineseInputRecyclerView"
