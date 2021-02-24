@@ -59,14 +59,14 @@ public class ChooseDaysButton {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getThisDayWords(List<Word> list) {
-        if(!choseFlag){
+        if (!choseFlag) {
             return;
         }
         List<JSONObject> jsonObjects = parseJsonToJsonObjectArrayNotNull();
         for (JSONObject jsonObject : jsonObjects) {
             Word word = new Word();
             word.setAllChineseMap(((Map<PartOfSpeechEnum, String>) jsonObject.get("allChineseMap", Map.class)));
-            word.setAudioPath(this.basePath + jsonObject.get("audioPath", String.class).replace("D:\\Java Project\\English Tool\\resource\\", ""));
+            word.setAudioPath(this.basePath + File.separator + jsonObject.get("audioPath", String.class).replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\','/'));
             word.setEnglish(jsonObject.get("english", String.class));
             word.setDays(jsonObject.get("days", Integer.class));
             word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));

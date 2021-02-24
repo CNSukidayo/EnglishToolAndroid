@@ -1,5 +1,7 @@
 package com.cnsukidayo.englishtoolandroid;
 
+import android.media.AsyncPlayer;
+import android.media.AudioAttributes;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -44,6 +46,8 @@ public class LearnPage extends AppCompatActivity {
     private Button playButton;
     // 下一个按钮
     private Button nextButton;
+    // 暂停按钮
+
     // 检查答案按钮
     private Button checkAnswersButton;
     // 标记单词按钮
@@ -117,7 +121,12 @@ public class LearnPage extends AppCompatActivity {
     }
 
     private View.OnClickListener playClickListener = null;
-
+    // 单词音频播放器,有写好的类
+    private AsyncPlayer asyncPlayer = new AsyncPlayer("单词音频播放器");
+    private AudioAttributes audioAttributes = new AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build();
     private View.OnClickListener getPlayClickListener() {
         if (playClickListener == null) {
             playClickListener = v -> {
@@ -132,7 +141,6 @@ public class LearnPage extends AppCompatActivity {
                         if (signFlag) {
                             current = find(-1);
                         }
-                        System.out.println("上一个被点击");
                         break;
                     case R.id.nextButton:
                         if (current == allWorlds.size() - 1) {
@@ -143,10 +151,10 @@ public class LearnPage extends AppCompatActivity {
                         if (signFlag) {
                             current = find(1);
                         }
-                        System.out.println("下一个被点击");
                         break;
                 }
                 // 不管怎样最终都要播放音效
+                asyncPlayer.play(getApplicationContext(),allWorlds.get(current).getAudioUri(),false, audioAttributes);
                 checkSign();
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
                 englishAnswerTextView.setText("");
@@ -157,7 +165,7 @@ public class LearnPage extends AppCompatActivity {
         return playClickListener;
     }
 
-    // todo 记忆单词+播放声音+主页必须选择一天+固定搭配和短语的换行+听写模式的判断
+    // todo 记忆单词+固定搭配和短语的换行+听写模式的判断
     //
 //    private void saveWord() {
 //        Word word = new Word();

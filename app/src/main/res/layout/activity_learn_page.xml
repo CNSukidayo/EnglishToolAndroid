@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorLeanPageBackGround"
     android:orientation="vertical"
+    android:paddingTop="5dp"
     tools:context=".LearnPage">
 
     <TableLayout

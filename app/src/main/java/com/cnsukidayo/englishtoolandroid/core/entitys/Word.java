@@ -1,8 +1,11 @@
 package com.cnsukidayo.englishtoolandroid.core.entitys;
 
+import android.net.Uri;
+
 import com.cnsukidayo.englishtoolandroid.core.enums.PartOfSpeechEnum;
 import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +25,7 @@ public class Word implements Serializable {
     private int days;
     private WordCategory category;
     private String audioPath;
+    private volatile Uri audioUri;
     // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中
     private boolean flag = false;
 
@@ -81,6 +85,13 @@ public class Word implements Serializable {
         setFlag(!isFlag());
     }
 
+    public Uri getAudioUri() {
+        if (audioUri == null) {
+            audioUri = Uri.fromFile(new File(audioPath));
+        }
+        return audioUri;
+    }
+
     @Override
     public String toString() {
         return "Word{" +
@@ -89,6 +100,7 @@ public class Word implements Serializable {
                 ", days=" + days +
                 ", category=" + category +
                 ", audioPath='" + audioPath + '\'' +
+                ", flag=" + flag +
                 '}';
     }
 }

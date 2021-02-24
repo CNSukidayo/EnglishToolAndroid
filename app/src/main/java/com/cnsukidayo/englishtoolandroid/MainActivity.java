@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 
@@ -51,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
         Button chineseEnglishTranslationModel = findViewById(R.id.chineseEnglishTranslationModel);
         chineseEnglishTranslationModel.setOnClickListener(v -> {
             List<Word> allWords = homeListViewAdapter.getAllCheckWords();
+            try {
+                Assert.notEmpty(allWords, () -> new RuntimeException("用户没有选择任何一天!"));
+            } catch (RuntimeException e) {
+                Toast.makeText(getApplicationContext(), "点击按钮,请至少选择一天!", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+                return;
+            }
             // 打乱之后的集合
             ArrayList<Word> randomList = randomEleList(allWords, allWords.size());
             Intent intent = new Intent(MainActivity.this, LearnPage.class);
