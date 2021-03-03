@@ -5,14 +5,17 @@ import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -99,7 +102,7 @@ public class LearnPage extends AppCompatActivity {
         canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent();
-            setResult(MainActivity.RESULT_OK,intent);
+            setResult(MainActivity.RESULT_OK, intent);
             finish();
         });
         canScrollContainerCheckBox.setOnClickListener(v -> {
@@ -123,6 +126,38 @@ public class LearnPage extends AppCompatActivity {
             }
             // 设置所有中文
             learnPageRecyclerView.setAnswerLabelTextFromWord(allWorlds.get(current));
+        });
+
+        // 点击跳转的按钮
+        progressTextView.setOnClickListener(v -> {
+            final EditText editText = new EditText(LearnPage.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
+            builder.setTitle("跳转到:");
+            builder.setMessage("输入要跳转到第几个单词,输入值的区间:[1," + allWorlds.size() + "]");
+            builder.setView(editText);
+            builder.setCancelable(false);
+            editText.setInputType(InputType.TYPE_CLASS_DATETIME);
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                String value = editText.getText().toString();
+                int i;
+                try {
+                    i = Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "输入错误,请输入1~" + allWorlds.size() + "之间的值", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (0 < i && i <= allWorlds.size()) {
+                    current = i - 1;
+                    playButton.performClick();
+                } else {
+                    Toast.makeText(getApplicationContext(), "输入错误,请输入1~" + allWorlds.size() + "之间的值", Toast.LENGTH_LONG).show();
+                }
+            });
+            builder.setNegativeButton("取消", (dialog, which) -> {
+
+            });
+            builder.show();
         });
 
         preButton.setOnClickListener(getPlayClickListener());
