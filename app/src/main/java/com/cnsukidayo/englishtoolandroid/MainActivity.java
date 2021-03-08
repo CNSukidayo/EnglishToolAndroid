@@ -22,6 +22,7 @@ import com.cnsukidayo.englishtoolandroid.core.home.HomeListViewAdapter;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import cn.hutool.core.lang.Assert;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private View.OnClickListener startOnClickListener;
+    private boolean flag = false;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private View.OnClickListener getStartOnClickListener() {
@@ -89,7 +91,13 @@ public class MainActivity extends AppCompatActivity {
             startOnClickListener = v -> {
                 CacheQueue.SINGLE.doWork("allWords", () -> {
                     List<Word> allWords = homeListViewAdapter.getAllCheckWords();
-                    return randomEleList(allWords, allWords.size());
+                    if (!flag) {
+                        flag = true;
+                        return randomEleList(allWords, allWords.size());
+                    } else {
+                        Collections.shuffle(allWords);
+                        return allWords;
+                    }
                 });
                 try {
                     Assert.isTrue(homeListViewAdapter.assertOneDay(), () -> new RuntimeException("用户没有选择任何一天!"));
@@ -111,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 intent.putExtras(bundle);
-                startActivityForResult(intent,0);
+                startActivityForResult(intent, 0);
             };
         }
         return startOnClickListener;

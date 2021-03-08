@@ -101,9 +101,18 @@ public class LearnPage extends AppCompatActivity {
         backButton = findViewById(R.id.back);
         canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
         backButton.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            setResult(MainActivity.RESULT_OK, intent);
-            finish();
+            AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
+            builder.setMessage("确认返回主页?");
+            builder.setCancelable(false);
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                Intent intent = new Intent();
+                setResult(MainActivity.RESULT_OK, intent);
+                finish();
+            });
+            builder.setNegativeButton("取消", (dialog, which) -> {
+
+            });
+            builder.show();
         });
         canScrollContainerCheckBox.setOnClickListener(v -> {
             learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
