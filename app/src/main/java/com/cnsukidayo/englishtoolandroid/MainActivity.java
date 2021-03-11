@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Button chineseEnglishTranslationModel;
     // 全选按钮
     private Button allChose;
+    // 听音乐按钮
+    private Button toMusic;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
         String basePath = GetPathUtils.getStoragePath(this, true);
-        File baseFile = new File(basePath + File.separator + EnglishToolProperties.sourcePath);
+        File baseFile = new File(basePath + File.separator + EnglishToolProperties.englishSourcePath);
 
         // 创建适配器
         this.homeListViewAdapter = new HomeListViewAdapter(this, baseFile);
@@ -79,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
                 homeListViewAdapter.changeChoseStatus(flag);
 
             }
+        });
+        // 听音乐按钮
+        toMusic = findViewById(R.id.toMusic);
+        toMusic.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MusicActivity.class);
+            startActivityForResult(intent, 1);
         });
     }
 

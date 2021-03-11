@@ -26,4 +26,11 @@
             android:text="全选" />
 
     </TableRow>
+
+    <Button
+        android:id="@+id/toMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="听音乐" />
+
 </TableLayout>
