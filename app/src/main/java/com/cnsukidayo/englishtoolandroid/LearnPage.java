@@ -5,7 +5,9 @@ import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -24,7 +26,12 @@ import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
+import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +52,8 @@ public class LearnPage extends AppCompatActivity {
 
     // 返回上一级按钮
     private Button backButton;
+    // 保存按钮
+    private Button save;
     // 是否允许可变宽度
     private CheckBox canScrollContainerCheckBox;
     // 结果回显TextView
@@ -69,6 +78,8 @@ public class LearnPage extends AppCompatActivity {
     private Button markThisButton;
     // 开启标记模式按钮
     private Button startMarkModeButton;
+    // 临时
+    private boolean flag;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -84,11 +95,10 @@ public class LearnPage extends AppCompatActivity {
 
         this.allWorlds = CacheQueue.SINGLE.get("allWords");
         startMod = StartMod.valueOf(getIntent().getExtras().getString(StartMod.class.getName()));
+        this.flag = getIntent().getExtras().getBoolean("flag");
         playerWriteWordsCache = new HashMap<>(100);
         current = 0;
 
-        checkAnswersButton = findViewById(R.id.checkAnswersButton);
-        achievementTextView = findViewById(R.id.achievementTextView);
         progressTextView = findViewById(R.id.progressTextView);
         englishAnswerTextView = findViewById(R.id.result);
         input = findViewById(R.id.input);
@@ -97,8 +107,11 @@ public class LearnPage extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         stopButton = findViewById(R.id.stopButton);
         markThisButton = findViewById(R.id.markThisButton);
+        achievementTextView = findViewById(R.id.achievementTextView);
         startMarkModeButton = findViewById(R.id.startMarkModeButton);
+        checkAnswersButton = findViewById(R.id.checkAnswersButton);
         backButton = findViewById(R.id.back);
+        save = findViewById(R.id.save);
         canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
         backButton.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
@@ -113,6 +126,27 @@ public class LearnPage extends AppCompatActivity {
 
             });
             builder.show();
+        });
+        save.setOnClickListener(v -> {
+            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "basic.json";
+            playerWriteWordsCache.put(current, learnPageRecyclerView.getWordFromInPutText());
+            for (int i = 0; i < allWorlds.size(); i++) {
+                Word tempWord = playerWriteWordsCache.get(i);
+                if (tempWord == null || tempWord.noChinese()) {
+                    continue;
+                }
+                Word word = allWorlds.get(i);
+                word.setAllChineseMap(tempWord.getAllChineseMap());
+            }
+            try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
+                Gson gson = new Gson();
+                String result = gson.toJson(allWorlds);
+                Log.d("JSON", result);
+                writer.write(result.getBytes(StandardCharsets.UTF_8));
+                writer.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
         canScrollContainerCheckBox.setOnClickListener(v -> {
             learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
@@ -237,6 +271,9 @@ public class LearnPage extends AppCompatActivity {
                 startMod.englishAnswerValueHandle(allWorlds.get(current).getEnglish(), englishAnswerTextView);
                 achievementTextView.setText("");
                 learnPageRecyclerView.setAnswerLabelTextFromWord(null);
+                if (flag) {
+                    checkAnswersButton.performClick();
+                }
             };
         }
         return playClickListener;

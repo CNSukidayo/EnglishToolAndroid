@@ -8,29 +8,86 @@
 
     <TextView
         android:id="@+id/musicText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="当前正在播放:"
-        android:textColor="@color/colorBlack"
-        android:textSize="22sp" />
-
-    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        android:text=""
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/randomMusicPlay"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="随机选一首" />
+    <TextView
+        android:id="@+id/musicBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="0:00/0:00"
+        android:textColor="@color/colorBlack" />
 
-        <Button
-            android:id="@+id/randomMusicStop"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="暂停" />
-    </LinearLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0,1,2">
+        <TableRow>
+
+            <Button
+                android:id="@+id/randomMusicPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="随机选一首" />
+
+            <Button
+                android:id="@+id/randomMusicSuspend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/check_flag_word_fillet"
+                android:text="暂停" />
+
+            <Button
+                android:id="@+id/randomMusicStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="停止" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="不重复概率"
+                android:textSize="15sp"
+                android:singleLine="true" />
+        </TableRow>
+    </TableLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#90909090" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1">
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="搜索:"
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="233" />
+        </TableRow>
+    </TableLayout>
 
 </LinearLayout>

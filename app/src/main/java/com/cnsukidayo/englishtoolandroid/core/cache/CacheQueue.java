@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -24,9 +24,14 @@ public enum CacheQueue {
         private final ConcurrentHashMap<String, BlockingQueue<?>> cache = new ConcurrentHashMap<>();
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        public <T> void doWork(String taskName, Supplier<T> supplier) {
-            BlockingQueue<T> blockingQueue = new LinkedBlockingDeque<>(1);
-            executorService.execute(() -> blockingQueue.add(supplier.get()));
+        public <T> void doWork(String taskName, final Supplier<T> supplier) {
+            final BlockingQueue<T> blockingQueue = new LinkedBlockingDeque<>(1);
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    blockingQueue.add(supplier.get());
+                }
+            });
             cache.put(taskName, blockingQueue);
         }
 
@@ -41,26 +46,30 @@ public enum CacheQueue {
         }
 
         @Override
-        public <T> void addWork(String taskName, Consumer<T> consumer) {
-            BlockingQueue<Consumer<T>> blockingQueue = new LinkedBlockingDeque<>(1);
-            executorService.execute(() -> blockingQueue.add(consumer));
+        public <T, R> void addWork(String taskName, final Function<T, R> consumer) {
+            final BlockingQueue<Function<T, R>> blockingQueue = new LinkedBlockingDeque<>(1);
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    blockingQueue.add(consumer);
+                }
+            });
             cache.put(taskName, blockingQueue);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
-        public <T> void accept(String taskName, T args) {
-            try {
-                Object take = cache.get(taskName).take();
-                if (take instanceof Consumer) {
-                    ((Consumer) take).accept(args);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        public <T, R> R accept(String taskName, T args) {
+            BlockingQueue<?> blockingQueue = cache.get(taskName);
+            if (blockingQueue == null) {
+                return null;
             }
+            Object take = blockingQueue.peek();
+            if (take instanceof Function) {
+                return (R) ((Function) take).apply(args);
+            }
+            return null;
         }
-
-
     };
 
     /**
@@ -89,7 +98,7 @@ public enum CacheQueue {
      * @param supplier 消费者接口
      * @param <T>
      */
-    public abstract <T> void addWork(String taskName, Consumer<T> supplier);
+    public abstract <T, R> void addWork(String taskName, Function<T, R> supplier);
 
     /**
      * 执行待执行的任务,这个任务只能是Consumer接口
@@ -97,7 +106,7 @@ public enum CacheQueue {
      * @param taskName 任务名称
      * @param args     传给待执行任务的参数
      */
-    public abstract <T> void accept(String taskName, T args);
+    public abstract <T, R> R accept(String taskName, T args);
 
 
 }

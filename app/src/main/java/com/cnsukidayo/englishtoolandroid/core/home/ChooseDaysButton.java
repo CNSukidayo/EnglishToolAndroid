@@ -11,17 +11,13 @@ import com.cnsukidayo.englishtoolandroid.R;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.PartOfSpeechEnum;
 import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
+import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 
 /**
  * 选择第几天的符合组件
@@ -66,7 +62,7 @@ public class ChooseDaysButton {
         for (JSONObject jsonObject : jsonObjects) {
             Word word = new Word();
             word.setAllChineseMap(((Map<PartOfSpeechEnum, String>) jsonObject.get("allChineseMap", Map.class)));
-            word.setAudioPath(this.basePath + File.separator + jsonObject.get("audioPath", String.class).replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\','/'));
+            word.setAudioPath(this.basePath + File.separator + jsonObject.get("audioPath", String.class).replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\', '/'));
             word.setEnglish(jsonObject.get("english", String.class));
             word.setDays(jsonObject.get("days", Integer.class));
             word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
@@ -79,7 +75,7 @@ public class ChooseDaysButton {
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<JSONObject> parseJsonToJsonObjectArrayNotNull() {
-        return Optional.ofNullable(((JSONArray) JSONUtil.parse(JSONUtil.readJSON(thisDayJsonFile.getAbsoluteFile(), StandardCharsets.UTF_8))).toList(JSONObject.class)).orElse(Collections.emptyList());
+        return ParseWordsUtils.parseJsonToJsonObjectArrayNotNull(thisDayJsonFile.getAbsoluteFile());
     }
 
     public CheckBox getCheckBox() {
@@ -104,7 +100,7 @@ public class ChooseDaysButton {
 
     public void setLinearLayout(LinearLayout linearLayout) {
         this.linearLayout = linearLayout;
-        linearLayout.setOnClickListener(v -> changeChoseStatus(!choseFlag));
+        linearLayout.setOnClickListener(view -> changeChoseStatus(!choseFlag));
     }
 
     public void setThisDayJsonFile(File thisDayJsonFile) {

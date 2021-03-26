@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
@@ -15,19 +18,21 @@ import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeListViewAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private final File[] allJsonDaysFile;
-    private List<ChooseDaysButton> allChooseDaysButton;
+    private Map<Integer,ChooseDaysButton> allChooseDaysButton;
     private final File baseFile;
 
     public HomeListViewAdapter(Context context, File baseFile) {
         layoutInflater = LayoutInflater.from(context);
         this.baseFile = baseFile;
         this.allJsonDaysFile = new File(baseFile, File.separator + EnglishToolProperties.json).listFiles();
-        this.allChooseDaysButton = new ArrayList<>(allJsonDaysFile.length);
+        this.allChooseDaysButton = new HashMap<>(allJsonDaysFile.length);
     }
 
     @Override
@@ -48,21 +53,21 @@ public class HomeListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ChooseDaysButton chooseDaysButton = null;
-        if (convertView == null) {
+        if (allChooseDaysButton.size() <= position ||convertView == null) {
             // 这一步相当于是根据Context来获得到activity_choose_json_button这个页面,然后根据这个页面获取对应的组件?并且最终返回这个页面作为ListView的一个组件?
             convertView = layoutInflater.inflate(R.layout.activity_choose_json_button, null);
             chooseDaysButton = new ChooseDaysButton();
-            chooseDaysButton.setCheckBox(convertView.findViewById(R.id.chooseJsonCheckBox));
-            chooseDaysButton.setTextView(convertView.findViewById(R.id.chooseJsonTextView));
-            chooseDaysButton.setLinearLayout(convertView.findViewById(R.id.chooseJsonLinearLayout));
+            chooseDaysButton.setCheckBox((CheckBox) convertView.findViewById(R.id.chooseJsonCheckBox));
+            chooseDaysButton.setTextView((TextView) convertView.findViewById(R.id.chooseJsonTextView));
+            chooseDaysButton.setLinearLayout((LinearLayout) convertView.findViewById(R.id.chooseJsonLinearLayout));
+            chooseDaysButton.getTextView().setText(allJsonDaysFile[position].getName().substring(0, allJsonDaysFile[position].getName().indexOf('.')));
+            chooseDaysButton.setThisDayJsonFile(allJsonDaysFile[position]);
+            chooseDaysButton.setBasePath(baseFile.getAbsolutePath());
+            allChooseDaysButton.put(position,chooseDaysButton);
             convertView.setTag(chooseDaysButton);
-            allChooseDaysButton.add(chooseDaysButton);
         } else {
-            chooseDaysButton = (ChooseDaysButton) convertView.getTag();
+            convertView.setTag(allChooseDaysButton.get(position));
         }
-        chooseDaysButton.getTextView().setText(allJsonDaysFile[position].getName().substring(0, allJsonDaysFile[position].getName().indexOf('.')));
-        chooseDaysButton.setThisDayJsonFile(allJsonDaysFile[position]);
-        chooseDaysButton.setBasePath(baseFile.getAbsolutePath());
         return convertView;
     }
 
@@ -72,7 +77,7 @@ public class HomeListViewAdapter extends BaseAdapter {
      * @param status true代表所有按钮选中 false代表所有按钮不选中
      */
     public void changeChoseStatus(boolean status) {
-        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton) {
+        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton.values()) {
             chooseDaysButton.changeChoseStatus(status);
         }
     }
@@ -83,7 +88,7 @@ public class HomeListViewAdapter extends BaseAdapter {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public List<Word> getAllCheckWords() {
         List<Word> words = new ArrayList<>(80);
-        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton) {
+        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton.values()) {
             chooseDaysButton.getThisDayWords(words);
         }
         return words;
@@ -95,7 +100,7 @@ public class HomeListViewAdapter extends BaseAdapter {
      * @return true:用户选择了一天 false:用户一天都没选择.
      */
     public boolean assertOneDay() {
-        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton) {
+        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton.values()) {
             if (chooseDaysButton.isChoseFlag()) {
                 return true;
             }

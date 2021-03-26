@@ -25,9 +25,9 @@ public class Word implements Serializable {
     private int days;
     private WordCategory category;
     private String audioPath;
-    private volatile Uri audioUri;
+    private transient volatile Uri audioUri;
     // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中
-    private boolean flag = false;
+    private transient boolean flag = false;
 
     public Word() {
         allChineseMap = new HashMap<>(PartOfSpeechEnum.values().length);
@@ -90,6 +90,22 @@ public class Word implements Serializable {
             audioUri = Uri.fromFile(new File(audioPath));
         }
         return audioUri;
+    }
+
+    /**
+     * 判断当前这个单词是不是一个空单词(即没有任何中文信息)
+     *
+     * @return
+     */
+    public boolean noChinese() {
+        boolean result = true;
+        for (String value : allChineseMap.values()) {
+            if (!value.isEmpty()) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 
     @Override
