@@ -13,6 +13,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -113,6 +114,10 @@ public class LearnPage extends AppCompatActivity {
         backButton = findViewById(R.id.back);
         save = findViewById(R.id.save);
         canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
+        LinearLayout linearLayout = findViewById(R.id.topBar);
+        if (!flag) {
+            linearLayout.removeView(save);
+        }
         backButton.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
             builder.setMessage("确认返回主页?");

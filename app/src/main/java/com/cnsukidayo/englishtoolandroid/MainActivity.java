@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
                         break;
                 }
-                bundle.putBoolean("flag", true);
+                bundle.putBoolean("flag", false);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
             };

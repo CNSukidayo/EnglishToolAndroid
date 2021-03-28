@@ -10,7 +10,7 @@ public class SortUtils {
      * @param files 文件
      */
     public static void sortWordWithName(File... files) {
-        Arrays.sort(files, (file1, file2) -> Integer.parseInt(file1.getName().substring(0, file1.getName().lastIndexOf('.')).replaceAll("[a-zA-Z]", "")) - Integer.parseInt(file2.getName().substring(0, file2.getName().lastIndexOf('.')).replaceAll("[a-zA-Z]", "")));
+        Arrays.sort(files, (file1, file2) -> Integer.parseInt(file1.getName().substring(0, file1.getName().lastIndexOf('.')).replaceAll("[a-zA-Z|-]", "")) - Integer.parseInt(file2.getName().substring(0, file2.getName().lastIndexOf('.')).replaceAll("[a-zA-Z|-]", "")));
     }
 
 }
