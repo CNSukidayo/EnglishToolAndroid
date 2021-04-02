@@ -69,6 +69,11 @@ public class LearnPageRecyclerView extends RecyclerView.Adapter<LearnPageRecycle
 
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     /**
      * 传入单词对象,设置答案框的内容为单词内容.该方法主要是检查功能
      * 如果传入的对象是null 代表清除中文答案框中的所有内容
@@ -112,7 +117,7 @@ public class LearnPageRecyclerView extends RecyclerView.Adapter<LearnPageRecycle
         input.setText(word == null ? "" : word.getEnglish());
     }
 
-    public void setCanScrollContainer(boolean flag){
+    public void setCanScrollContainer(boolean flag) {
         for (ChineseInput chineseInput : allChineseInput) {
             chineseInput.getChineseInputText().setHorizontalScrollBarEnabled(flag);
         }

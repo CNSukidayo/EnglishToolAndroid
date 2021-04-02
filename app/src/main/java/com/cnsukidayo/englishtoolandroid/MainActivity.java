@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         final File baseFile = new File(basePath + File.separator + EnglishToolProperties.englishSourcePath);
 
         WrapRecyclerView homeJsonRecyclerView = findViewById(R.id.homeJsonRecyclerView);
-//        homeJsonRecyclerView.setItemViewCacheSize(30);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         this.homeRecyclerViewAdapter = new HomeRecyclerViewAdapter(baseFile, this);
         homeJsonRecyclerView.setLayoutManager(linearLayoutManager);

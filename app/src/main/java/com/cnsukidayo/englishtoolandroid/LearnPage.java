@@ -89,7 +89,12 @@ public class LearnPage extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_learn_page);
         RecyclerView chineseInputRecyclerView = findViewById(R.id.chineseInputRecyclerView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this){
+            @Override
+            public boolean canScrollHorizontally() {
+                return false;
+            }
+        };
         chineseInputRecyclerView.setLayoutManager(linearLayoutManager);
         learnPageRecyclerView = new LearnPageRecyclerView(this);
         chineseInputRecyclerView.setAdapter(learnPageRecyclerView);

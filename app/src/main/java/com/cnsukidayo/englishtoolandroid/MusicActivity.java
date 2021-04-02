@@ -7,15 +7,19 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.music.MediaButtonReceiver;
+import com.cnsukidayo.englishtoolandroid.core.music.MusicRecyclerViewAdapter;
+import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 
 import java.io.File;
@@ -23,15 +27,18 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Consumer;
 
 public class MusicActivity extends AppCompatActivity {
     // 所有文件
-    private File[] files;
+    private File[] allMusicFiles;
     // 进度条
     private Timer timer = new Timer();
     private MediaPlayer mediaPlayer = new MediaPlayer();
     // 当前正在播放的音乐
     private TextView musicText;
+    // 适配器
+    private MusicRecyclerViewAdapter musicRecyclerViewAdapter;
     // 进度条
     private TextView musicBar;
     // 随机播放按钮
@@ -54,15 +61,23 @@ public class MusicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_music);
         String basePath = GetPathUtils.getStoragePath(this, true);
         File baseFile = new File(basePath + File.separator + EnglishToolProperties.musicSourcePath);
-        files = baseFile.listFiles();
+        allMusicFiles = baseFile.listFiles();
         musicText = findViewById(R.id.musicText);
         musicBar = findViewById(R.id.musicBar);
         randomMusicPlay = findViewById(R.id.randomMusicPlay);
         randomMusicSuspend = findViewById(R.id.randomMusicSuspend);
         randomMusicStop = findViewById(R.id.randomMusicStop);
+
+        // 适配器
+        WrapRecyclerView musicRecyclerView = findViewById(R.id.musicRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        this.musicRecyclerViewAdapter = new MusicRecyclerViewAdapter(allMusicFiles, this,consumer);
+        musicRecyclerView.setLayoutManager(linearLayoutManager);
+        musicRecyclerView.setAdapter(this.musicRecyclerViewAdapter);
         randomMusicPlay.setOnClickListener(view -> randomPlay());
         randomMusicStop.setOnClickListener(view -> mediaPlayer.stop());
         mediaPlayer.setOnCompletionListener(mediaPlayer -> {
@@ -132,11 +147,16 @@ public class MusicActivity extends AppCompatActivity {
 
     private void randomPlay() {
         pausePosition = 0;
-        pre = random(files.length - 1, pre);
-        musicText.setText(files[pre].getName());
+        pre = random(allMusicFiles.length - 1, pre);
+        playMusic(allMusicFiles[pre]);
+    }
+    private Consumer<File> consumer = this::playMusic;
+
+    public void playMusic(File file) {
+        musicText.setText(file.getName());
         mediaPlayer.reset();
         try {
-            mediaPlayer.setDataSource(files[pre].getAbsolutePath());
+            mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
         } catch (IOException e) {

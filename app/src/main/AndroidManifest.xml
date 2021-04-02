@@ -22,7 +22,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MusicActivity" />
+        <activity android:name=".MusicActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".LearnPage"
             android:windowSoftInputMode="stateHidden" />
