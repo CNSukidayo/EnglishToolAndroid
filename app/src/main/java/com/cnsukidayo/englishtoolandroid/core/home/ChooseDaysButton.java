@@ -27,7 +27,7 @@ public class ChooseDaysButton {
     private CheckBox checkBox;
     private TextView textView;
     private LinearLayout linearLayout;
-    private boolean choseFlag = false;
+    private volatile boolean choseFlag = false;
     // 当前天所对应的Json路径
     private File thisDayJsonFile;
 
@@ -38,6 +38,13 @@ public class ChooseDaysButton {
      */
     public void changeChoseStatus(boolean status) {
         choseFlag = status;
+        refuseChoseStatus();
+    }
+
+    /**
+     * 刷新当前按钮的选中状态
+     */
+    public void refuseChoseStatus() {
         if (choseFlag) {
             linearLayout.setBackgroundResource(R.drawable.json_linear_layout_choose);
             checkBox.setChecked(true);
@@ -100,7 +107,10 @@ public class ChooseDaysButton {
 
     public void setLinearLayout(LinearLayout linearLayout) {
         this.linearLayout = linearLayout;
-        linearLayout.setOnClickListener(view -> changeChoseStatus(!choseFlag));
+        linearLayout.setOnClickListener(view -> {
+            choseFlag = !isChoseFlag();
+            refuseChoseStatus();
+        });
     }
 
     public void setThisDayJsonFile(File thisDayJsonFile) {

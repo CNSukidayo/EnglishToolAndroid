@@ -1,12 +1,14 @@
 package com.cnsukidayo.englishtoolandroid.core.home;
 
+import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cnsukidayo.englishtoolandroid.R;
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
@@ -18,52 +20,60 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HomeListViewAdapter extends BaseAdapter {
-    private final File[] allJsonDaysFile;
-    private Map<Integer,ChooseDaysButton> allChooseDaysButton;
-    private final File baseFile;
+public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.LinearViewHolder> {
 
-    public HomeListViewAdapter(File baseFile) {
-        this.baseFile = baseFile;
+    private LayoutInflater layoutInflater;
+    private final File[] allJsonDaysFile;
+    private final File baseFile;
+    private Map<Integer, ChooseDaysButton> allChooseDaysButton;
+
+    public HomeRecyclerViewAdapter(File baseFile, Context context) {
+        layoutInflater = LayoutInflater.from(context);
         this.allJsonDaysFile = new File(baseFile, File.separator + EnglishToolProperties.json).listFiles();
+        this.baseFile = baseFile;
         this.allChooseDaysButton = new HashMap<>(allJsonDaysFile.length);
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return this.allJsonDaysFile.length;
+    public LinearViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new LinearViewHolder(layoutInflater.inflate(R.layout.activity_choose_json_button, parent, false));
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public void onBindViewHolder(@NonNull LinearViewHolder holder, int position) {
+        holder.chooseDaysButton.getTextView().setText(allJsonDaysFile[position].getName().substring(0, allJsonDaysFile[position].getName().indexOf('.')));
+        holder.chooseDaysButton.setThisDayJsonFile(allJsonDaysFile[position]);
+        holder.chooseDaysButton.setBasePath(baseFile.getAbsolutePath());
+
+        allChooseDaysButton.put(position, holder.chooseDaysButton);
     }
 
     @Override
-    public long getItemId(int position) {
+    public int getItemViewType(int position) {
         return position;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ChooseDaysButton chooseDaysButton = null;
-        if (allChooseDaysButton.size() <= position ||convertView == null) {
-            // 这一步相当于是根据Context来获得到activity_choose_json_button这个页面,然后根据这个页面获取对应的组件?并且最终返回这个页面作为ListView的一个组件?
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_choose_json_button, null);
-            chooseDaysButton = new ChooseDaysButton();
-            chooseDaysButton.setCheckBox(convertView.findViewById(R.id.chooseJsonCheckBox));
-            chooseDaysButton.setTextView(convertView.findViewById(R.id.chooseJsonTextView));
-            chooseDaysButton.setLinearLayout(convertView.findViewById(R.id.chooseJsonLinearLayout));
-            chooseDaysButton.getTextView().setText(allJsonDaysFile[position].getName().substring(0, allJsonDaysFile[position].getName().indexOf('.')));
-            chooseDaysButton.setThisDayJsonFile(allJsonDaysFile[position]);
-            chooseDaysButton.setBasePath(baseFile.getAbsolutePath());
-            allChooseDaysButton.put(position,chooseDaysButton);
-            convertView.setTag(chooseDaysButton);
-        } else {
-            convertView.setTag(allChooseDaysButton.get(position));
-        }
-        return convertView;
+    public int getItemCount() {
+        return this.allJsonDaysFile.length;
     }
+
+    class LinearViewHolder extends RecyclerView.ViewHolder {
+
+
+        private ChooseDaysButton chooseDaysButton;
+
+        LinearViewHolder(@NonNull View itemView) {
+            super(itemView);
+            chooseDaysButton = new ChooseDaysButton();
+            chooseDaysButton.setCheckBox(itemView.findViewById(R.id.chooseJsonCheckBox));
+            chooseDaysButton.setTextView(itemView.findViewById(R.id.chooseJsonTextView));
+            chooseDaysButton.setLinearLayout(itemView.findViewById(R.id.chooseJsonLinearLayout));
+        }
+
+    }
+
 
     /**
      * 设置所有按钮的选中状态
@@ -101,5 +111,6 @@ public class HomeListViewAdapter extends BaseAdapter {
         }
         return false;
     }
+
 
 }

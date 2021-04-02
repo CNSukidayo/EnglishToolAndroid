@@ -6,11 +6,12 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/homeJsonListView"
+    <com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView
+        android:id="@+id/homeJsonRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@null">
+        android:clipChildren="false">
 
-    </ListView>
+    </com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView>
+
 </LinearLayout>
