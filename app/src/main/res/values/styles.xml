@@ -22,4 +22,9 @@
         <item name="android:colorControlNormal">@color/colorNotChooseJsonCheckBoxBlue</item>
     </style>
 
+    <style name="showPopupAnimation" parent="android:Animation">
+        <item name="android:windowExitAnimation">@anim/alpha_exit</item>
+        <item name="android:windowEnterAnimation">@anim/alpha_in</item>
+    </style>
+
 </resources>

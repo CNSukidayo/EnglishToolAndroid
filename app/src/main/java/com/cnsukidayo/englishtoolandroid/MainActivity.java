@@ -38,7 +38,10 @@ import static com.cnsukidayo.englishtoolandroid.utils.RandomArrayUtils.randomEle
 public class MainActivity extends AppCompatActivity {
 
     private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
+    // 基础单词按钮
     private Button basic;
+    // 搜搜单词
+    private Button searchWord;
     // 听写模式
     private Button dictationModel;
     // 中译英模式
@@ -91,10 +94,20 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LearnPage.class);
             Bundle bundle = new Bundle();
             bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
-            bundle.putString("basePath", basePath);
-            bundle.putBoolean("flag", true);
+            bundle.putInt("status", 0);
             intent.putExtras(bundle);
             startActivityForResult(intent, 0);
+        });
+        // 搜搜单词
+        searchWord = startTableLayout.findViewById(R.id.searchWord);
+        searchWord.setOnClickListener(v -> {
+            CacheQueue.SINGLE.doWork("allWords", () -> homeRecyclerViewAdapter.getAllWords());
+            Intent intent = new Intent(MainActivity.this, LearnPage.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
+            bundle.putInt("status", 1);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, 1);
         });
         // 听写模式
         dictationModel = startTableLayout.findViewById(R.id.dictationModel);
@@ -125,12 +138,12 @@ public class MainActivity extends AppCompatActivity {
         toMusic = startTableLayout.findViewById(R.id.toMusic);
         toMusic.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, MusicActivity.class);
-            startActivityForResult(intent, 1);
+            startActivityForResult(intent, 3);
         });
     }
 
     private View.OnClickListener startOnClickListener;
-    private boolean flag = false;
+    private boolean noFirstRandom = false;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private View.OnClickListener getStartOnClickListener() {
@@ -139,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     CacheQueue.SINGLE.doWork("allWords", () -> {
                         List<Word> allWords = homeRecyclerViewAdapter.getAllCheckWords();
-                        if (!flag) {
-                            flag = true;
+                        if (!noFirstRandom) {
+                            noFirstRandom = true;
                             return randomEleList(allWords, allWords.size());
                         } else {
                             Collections.shuffle(allWords);
@@ -168,9 +181,9 @@ public class MainActivity extends AppCompatActivity {
                         bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
                         break;
                 }
-                bundle.putBoolean("flag", false);
+                bundle.putInt("status", 2);
                 intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, 2);
             };
         }
         return startOnClickListener;

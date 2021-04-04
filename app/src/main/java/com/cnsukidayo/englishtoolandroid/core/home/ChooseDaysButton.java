@@ -61,10 +61,20 @@ public class ChooseDaysButton {
      * @return 返回的List保证不会空, 但有可能是空集.
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void getThisDayWords(List<Word> list) {
+    public void getThisDayWordsWithChose(List<Word> list) {
         if (!choseFlag) {
             return;
         }
+        getThisDayWords(list);
+    }
+    /**
+     * 得到当前按钮所对应的所有单词
+     *
+     * @param list 添加到哪个集合
+     * @return 返回的List保证不会空, 但有可能是空集.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void getThisDayWords(List<Word> list) {
         List<JSONObject> jsonObjects = parseJsonToJsonObjectArrayNotNull();
         for (JSONObject jsonObject : jsonObjects) {
             Word word = new Word();

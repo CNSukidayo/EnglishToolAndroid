@@ -6,7 +6,9 @@ import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +16,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +33,14 @@ import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
+import com.cnsukidayo.englishtoolandroid.core.learn.SearchPoPRecyclerViewAdapter;
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +63,16 @@ public class LearnPage extends AppCompatActivity {
     private Button backButton;
     // 保存按钮
     private Button save;
+    // activityLearnPage外部的Layout
+    private LinearLayout learnPage;
+    // topBarLayout
+    private LinearLayout topBarLinearLayout;
+    // 结果回显TableRow
+    private TableRow resultTableRow;
+    // 检查答案的TableLayout
+    private TableLayout checkAnswersTableLayout;
+    // 控制单词播放的controllerTableLayout
+    private TableRow controllerTableRow;
     // 是否允许可变宽度
     private CheckBox canScrollContainerCheckBox;
     // 结果回显TextView
@@ -65,6 +83,8 @@ public class LearnPage extends AppCompatActivity {
     private TextView progressTextView;
     // 英文输入框
     private EditText input;
+    // 搜索弹出的PopWindow
+    private PopupWindow searchPopupWindow;
     // 上一个按钮
     private Button preButton;
     // 播放按钮
@@ -80,7 +100,7 @@ public class LearnPage extends AppCompatActivity {
     // 开启标记模式按钮
     private Button startMarkModeButton;
     // 临时
-    private boolean flag;
+    private int status;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -89,7 +109,7 @@ public class LearnPage extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_learn_page);
         RecyclerView chineseInputRecyclerView = findViewById(R.id.chineseInputRecyclerView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this){
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
             @Override
             public boolean canScrollHorizontally() {
                 return false;
@@ -101,7 +121,8 @@ public class LearnPage extends AppCompatActivity {
 
         this.allWorlds = CacheQueue.SINGLE.get("allWords");
         startMod = StartMod.valueOf(getIntent().getExtras().getString(StartMod.class.getName()));
-        this.flag = getIntent().getExtras().getBoolean("flag");
+        this.status = getIntent().getExtras().getInt("status");
+
         playerWriteWordsCache = new HashMap<>(100);
         current = 0;
 
@@ -119,10 +140,14 @@ public class LearnPage extends AppCompatActivity {
         backButton = findViewById(R.id.back);
         save = findViewById(R.id.save);
         canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
-        LinearLayout linearLayout = findViewById(R.id.topBar);
-        if (!flag) {
-            linearLayout.removeView(save);
-        }
+        resultTableRow = findViewById(R.id.resultTableRow);
+        learnPage = findViewById(R.id.learnPage);
+        topBarLinearLayout = findViewById(R.id.topBar);
+        checkAnswersTableLayout = findViewById(R.id.checkAnswersTableLayout);
+        controllerTableRow = findViewById(R.id.controllerTableRow);
+        // 动态删除组件
+        removeViewByStatus();
+
         backButton.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
             builder.setMessage("确认返回主页?");
@@ -214,7 +239,6 @@ public class LearnPage extends AppCompatActivity {
         });
 
         preButton.setOnClickListener(getPlayClickListener());
-        playButton.setOnClickListener(getPlayClickListener());
         nextButton.setOnClickListener(getPlayClickListener());
 
         markThisButton.setOnClickListener(v -> {
@@ -232,7 +256,123 @@ public class LearnPage extends AppCompatActivity {
                 startMarkModeButton.setTextColor(getResources().getColor(R.color.colorBlack));
             }
         });
+        // 单词搜索的事件监听
+        if (status == 1) {
+            input.addTextChangedListener(new TextWatcher() {
+                private Map<Character, List<Word>> searchMapCache = new HashMap<Character, List<Word>>(allWorlds.size()) {{
+                    put('a', new ArrayList<>());
+                    put('b', new ArrayList<>());
+                    put('c', new ArrayList<>());
+                    put('d', new ArrayList<>());
+                    put('e', new ArrayList<>());
+                    put('f', new ArrayList<>());
+                    put('g', new ArrayList<>());
+                    put('h', new ArrayList<>());
+                    put('i', new ArrayList<>());
+                    put('j', new ArrayList<>());
+                    put('k', new ArrayList<>());
+                    put('l', new ArrayList<>());
+                    put('m', new ArrayList<>());
+                    put('n', new ArrayList<>());
+                    put('o', new ArrayList<>());
+                    put('p', new ArrayList<>());
+                    put('q', new ArrayList<>());
+                    put('r', new ArrayList<>());
+                    put('s', new ArrayList<>());
+                    put('t', new ArrayList<>());
+                    put('u', new ArrayList<>());
+                    put('v', new ArrayList<>());
+                    put('w', new ArrayList<>());
+                    put('x', new ArrayList<>());
+                    put('y', new ArrayList<>());
+                    put('z', new ArrayList<>());
+                }};
 
+                {
+                    for (Word word : allWorlds) {
+                        // 获取到第一个字符
+                        char firstChar = word.getEnglish().charAt(0);
+                        // 拿到该字符所对应的List,并将当前单词添加进去
+                        searchMapCache.get(firstChar).add(word);
+                    }
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                private boolean enableAnimation = true;
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    String searchText = editable.toString().toLowerCase();
+                    if (searchText.isEmpty()) {
+                        destroyPoPWindow();
+                        return;
+                    }
+
+                    // 得到匹配当前当前首字母的List
+                    List<Word> matchFirstCharListWord = searchMapCache.get(searchText.charAt(0));
+                    if (matchFirstCharListWord == null) {
+                        destroyPoPWindow();
+                        return;
+                    }
+                    // 匹配对应的单词
+                    List<Word> temp = new ArrayList<>(10);
+                    for (Word word : matchFirstCharListWord) {
+                        if (word.getEnglish().contains(searchText)) temp.add(word);
+                    }
+                    if (temp.size() == 0) {
+                        destroyPoPWindow();
+                        return;
+                    }
+                    // 通过RelativeLayout+RecyclerView显示出来
+                    RelativeLayout layoutSearchPop = (RelativeLayout) getLayoutInflater().inflate(R.layout.activity_search_pop, null);
+                    RecyclerView searchPopRecyclerView = layoutSearchPop.findViewById(R.id.searchPopRecyclerView);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(LearnPage.this) {
+                        @Override
+                        public boolean canScrollHorizontally() {
+                            return false;
+                        }
+                    };
+                    searchPopRecyclerView.setLayoutManager(linearLayoutManager);
+                    SearchPoPRecyclerViewAdapter searchPoPRecyclerViewAdapter = new SearchPoPRecyclerViewAdapter(
+                            LearnPage.this, temp,
+                            word -> {
+                                destroyPoPWindow();
+                                learnPageRecyclerView.setAnswerLabelTextFromWord(word);
+                                asyncPlayer.play(getApplicationContext(), word.getAudioUri(), false, audioAttributes);
+                                toPlay = word;
+                                englishAnswerTextView.setText(word.getEnglish());
+                            });
+                    searchPopRecyclerView.setAdapter(searchPoPRecyclerViewAdapter);
+
+                    searchPopupWindow = new PopupWindow(layoutSearchPop, input.getWidth(), 400);
+                    searchPopupWindow.setOutsideTouchable(true);
+                    if (!enableAnimation) {
+                        searchPopupWindow.setAnimationStyle(R.style.showPopupAnimation);
+                    }
+                    searchPopupWindow.showAsDropDown(input);
+                    enableAnimation = false;
+
+                }
+
+                private void destroyPoPWindow() {
+                    if (searchPopupWindow != null) {
+                        searchPopupWindow.setAnimationStyle(-1);
+                        searchPopupWindow.dismiss();
+                        enableAnimation = true;
+                    }
+                }
+
+            });
+        }
     }
 
     private View.OnClickListener playClickListener = null;
@@ -281,7 +421,7 @@ public class LearnPage extends AppCompatActivity {
                 startMod.englishAnswerValueHandle(allWorlds.get(current).getEnglish(), englishAnswerTextView);
                 achievementTextView.setText("");
                 learnPageRecyclerView.setAnswerLabelTextFromWord(null);
-                if (flag) {
+                if (status == 0) {
                     checkAnswersButton.performClick();
                 }
             };
@@ -289,6 +429,33 @@ public class LearnPage extends AppCompatActivity {
         return playClickListener;
     }
 
+    private Word toPlay;
+
+    // 根据当前的状态码删除组件
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void removeViewByStatus() {
+        playButton.setOnClickListener(getPlayClickListener());
+        switch (status) {
+            case 2:
+                topBarLinearLayout.removeView(save);
+                break;
+            case 1:
+                playButton.setOnClickListener(v -> {
+                    if (toPlay != null) {
+                        asyncPlayer.play(getApplicationContext(), toPlay.getAudioUri(), false, audioAttributes);
+                    }
+                });
+                resultTableRow.removeView(findViewById(R.id.progressTextView));
+                controllerTableRow.removeView(findViewById(R.id.preButton));
+                controllerTableRow.removeView(findViewById(R.id.nextButton));
+                learnPage.removeView(checkAnswersTableLayout);
+                topBarLinearLayout.removeView(findViewById(R.id.save));
+                input.setHint("搜索");
+                break;
+        }
+    }
+
+    // 寻找下一个标记的单词
     private int find(int sign) {
         for (int i = current; i < allWorlds.size() && i > -1; i += sign) {
             if (allWorlds.get(i).isFlag()) {
@@ -303,6 +470,7 @@ public class LearnPage extends AppCompatActivity {
         return current;
     }
 
+    // 检查当前单词是否被标记
     private void checkSign() {
         if (allWorlds.get(current).isFlag()) {
             markThisButton.setText("解除标记");

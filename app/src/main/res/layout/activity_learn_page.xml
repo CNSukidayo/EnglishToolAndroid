@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/learnPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorLeanPageBackGround"
@@ -9,36 +10,37 @@
 
     <LinearLayout
         android:id="@+id/topBar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="-5dp">
+        android:paddingBottom="-2dp">
 
         <Button
             android:id="@+id/back"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.2"
+            android:layout_weight="0.12"
             android:background="@drawable/back_fillet"
-            android:gravity="left|center"
+            android:gravity="left|center_vertical"
             android:minHeight="35dp"
             android:text="〈"
             android:textColor="@color/colorBlack"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="RtlHardcoded" />
 
         <Button
             android:id="@+id/save"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="保存" />
 
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="5">
+            android:layout_weight="0.3">
 
         </View>
 
@@ -46,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="2.5"
+            android:layout_weight="0.3"
             android:orientation="horizontal">
 
             <TableRow>
@@ -59,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="6"
+                    android:layout_weight="10"
                     android:width="0dp"
                     android:text="允许中文输入框自动延伸?"
                     android:textColor="@color/colorBlack" />
@@ -73,7 +75,8 @@
         android:layout_height="wrap_content"
         android:stretchColumns="0">
 
-        <TableRow>
+        <TableRow
+            android:id="@+id/resultTableRow">
 
             <TextView
                 android:id="@+id/result"
@@ -121,6 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:background="@drawable/english_input_fillet"
                 android:hint="在这里输入英文"
                 android:singleLine="true"
@@ -135,7 +139,8 @@
         android:layout_height="wrap_content"
         android:stretchColumns="0,1,2,3">
 
-        <TableRow>
+        <TableRow
+            android:id="@+id/controllerTableRow">
 
             <Button
                 android:id="@+id/preButton"
@@ -165,11 +170,15 @@
     </TableLayout>
 
     <TableLayout
+        android:id="@+id/checkAnswersTableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-2dp"
         android:stretchColumns="0,1,2">
 
-        <TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/checkAnswersButton"
@@ -202,7 +211,8 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        android:layout_marginTop="-2dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"

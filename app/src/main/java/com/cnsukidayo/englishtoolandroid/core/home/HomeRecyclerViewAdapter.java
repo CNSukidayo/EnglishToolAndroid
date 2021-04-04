@@ -93,6 +93,18 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     public List<Word> getAllCheckWords() {
         List<Word> words = new ArrayList<>(80);
         for (ChooseDaysButton chooseDaysButton : allChooseDaysButton.values()) {
+            chooseDaysButton.getThisDayWordsWithChose(words);
+        }
+        return words;
+    }
+
+    /**
+     * 得到所有单词
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public List<Word> getAllWords() {
+        List<Word> words = new ArrayList<>(80);
+        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton.values()) {
             chooseDaysButton.getThisDayWords(words);
         }
         return words;
