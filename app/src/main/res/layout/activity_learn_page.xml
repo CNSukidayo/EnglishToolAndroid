@@ -20,7 +20,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.12"
+            android:layout_weight="0.1"
             android:background="@drawable/back_fillet"
             android:gravity="left|center_vertical"
             android:minHeight="35dp"
@@ -36,38 +36,44 @@
             android:layout_height="match_parent"
             android:text="保存" />
 
+        <Button
+            android:id="@+id/saveScene"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="保存现场" />
+
 
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.3">
+            android:layout_weight="0.5">
 
         </View>
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.3"
-            android:orientation="horizontal">
+<!--        <TableLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_weight="0.3"-->
+<!--            android:orientation="horizontal">-->
 
-            <TableRow>
+<!--            <TableRow>-->
 
-                <CheckBox
-                    android:id="@+id/canScrollContainer"
-                    android:layout_gravity="center"
-                    android:checked="true" />
+<!--                <CheckBox-->
+<!--                    android:id="@+id/canScrollContainer"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:checked="true" />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="10"
-                    android:width="0dp"
-                    android:text="允许中文输入框自动延伸?"
-                    android:textColor="@color/colorBlack" />
-            </TableRow>
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_weight="10"-->
+<!--                    android:width="0dp"-->
+<!--                    android:text="允许中文输入框自动延伸?"-->
+<!--                    android:textColor="@color/colorBlack" />-->
+<!--            </TableRow>-->
 
-        </TableLayout>
+<!--        </TableLayout>-->
     </LinearLayout>
 
     <TableLayout
@@ -75,8 +81,7 @@
         android:layout_height="wrap_content"
         android:stretchColumns="0">
 
-        <TableRow
-            android:id="@+id/resultTableRow">
+        <TableRow android:id="@+id/resultTableRow">
 
             <TextView
                 android:id="@+id/result"
@@ -139,8 +144,7 @@
         android:layout_height="wrap_content"
         android:stretchColumns="0,1,2,3">
 
-        <TableRow
-            android:id="@+id/controllerTableRow">
+        <TableRow android:id="@+id/controllerTableRow">
 
             <Button
                 android:id="@+id/preButton"
@@ -211,8 +215,8 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:layout_marginTop="-2dp">
+        android:layout_marginTop="-2dp"
+        android:clipChildren="false">
 
         <RelativeLayout
             android:layout_width="wrap_content"

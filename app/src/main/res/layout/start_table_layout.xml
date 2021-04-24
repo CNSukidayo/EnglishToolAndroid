@@ -4,7 +4,20 @@
     android:layout_height="match_parent"
     android:paddingBottom="10dp"
     android:stretchColumns="0,1">
-
+    <LinearLayout
+        android:id="@+id/restoreTheScene"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/json_linear_layout_not_choose"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:gravity="center"
+            android:text="还原现场"
+            android:textColor="@color/colorBlack"
+            android:textSize="30sp" />
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

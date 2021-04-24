@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -41,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +63,8 @@ public class LearnPage extends AppCompatActivity {
     private Button backButton;
     // 保存按钮
     private Button save;
+    // 保存现场按钮
+    private Button saveScene;
     // activityLearnPage外部的Layout
     private LinearLayout learnPage;
     // topBarLayout
@@ -101,6 +103,8 @@ public class LearnPage extends AppCompatActivity {
     private Button startMarkModeButton;
     // 临时
     private int status;
+    // baseFile
+    private File baseFile;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -122,7 +126,10 @@ public class LearnPage extends AppCompatActivity {
         this.allWorlds = CacheQueue.SINGLE.get("allWords");
         startMod = StartMod.valueOf(getIntent().getExtras().getString(StartMod.class.getName()));
         this.status = getIntent().getExtras().getInt("status");
-
+        String baseFilePath = getIntent().getExtras().getString("baseFilePath");
+        if (baseFilePath != null) {
+            this.baseFile = new File(baseFilePath);
+        }
         playerWriteWordsCache = new HashMap<>(100);
         current = 0;
 
@@ -139,12 +146,13 @@ public class LearnPage extends AppCompatActivity {
         checkAnswersButton = findViewById(R.id.checkAnswersButton);
         backButton = findViewById(R.id.back);
         save = findViewById(R.id.save);
-        canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
+//        canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
         resultTableRow = findViewById(R.id.resultTableRow);
         learnPage = findViewById(R.id.learnPage);
         topBarLinearLayout = findViewById(R.id.topBar);
         checkAnswersTableLayout = findViewById(R.id.checkAnswersTableLayout);
         controllerTableRow = findViewById(R.id.controllerTableRow);
+        saveScene = findViewById(R.id.saveScene);
         // 动态删除组件
         removeViewByStatus();
 
@@ -176,17 +184,16 @@ public class LearnPage extends AppCompatActivity {
             try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
                 Gson gson = new Gson();
                 String result = gson.toJson(allWorlds);
-                Log.d("JSON", result);
                 writer.write(result.getBytes(StandardCharsets.UTF_8));
                 writer.flush();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
         });
-        canScrollContainerCheckBox.setOnClickListener(v -> {
-            learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
-            onResume();
-        });
+//        canScrollContainerCheckBox.setOnClickListener(v -> {
+//            learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
+//            onResume();
+//        });
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
 
         // 检查结果按钮事件
@@ -254,6 +261,18 @@ public class LearnPage extends AppCompatActivity {
             } else {
                 startMarkModeButton.setText("开启标记模式");
                 startMarkModeButton.setTextColor(getResources().getColor(R.color.colorBlack));
+            }
+        });
+        // 保存现场
+        saveScene.setOnClickListener(v -> {
+            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
+            try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
+                Gson gson = new Gson();
+                String result = gson.toJson(allWorlds);
+                writer.write(result.getBytes(StandardCharsets.UTF_8));
+                writer.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
         // 单词搜索的事件监听

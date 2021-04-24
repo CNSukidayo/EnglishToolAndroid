@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -15,12 +16,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
-import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
 import com.cnsukidayo.englishtoolandroid.core.home.HomeRecyclerViewAdapter;
+import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
 import com.cnsukidayo.englishtoolandroid.utils.SortUtils;
@@ -38,6 +39,8 @@ import static com.cnsukidayo.englishtoolandroid.utils.RandomArrayUtils.randomEle
 public class MainActivity extends AppCompatActivity {
 
     private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
+    // 还原现场
+    private LinearLayout restoreTheScene;
     // 基础单词按钮
     private Button basic;
     // 搜搜单词
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     // 听音乐按钮
     private Button toMusic;
 
+    private File baseFile;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
         final String basePath = GetPathUtils.getStoragePath(this, true);
-        final File baseFile = new File(basePath + File.separator + EnglishToolProperties.englishSourcePath);
+        baseFile = new File(basePath + File.separator + EnglishToolProperties.englishSourcePath);
 
         WrapRecyclerView homeJsonRecyclerView = findViewById(R.id.homeJsonRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -69,6 +74,11 @@ public class MainActivity extends AppCompatActivity {
         homeJsonRecyclerView.addFooterView(startTableLayout);
         homeJsonRecyclerView.setAdapter(this.homeRecyclerViewAdapter);
 
+        // 还原现场
+        restoreTheScene = findViewById(R.id.restoreTheScene);
+        restoreTheScene.setOnClickListener(v -> {
+            // todo 读取单词并且跳转
+        });
         // 基础词汇按钮
         basic = startTableLayout.findViewById(R.id.basic);
         basic.setOnClickListener(view -> {
@@ -182,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 bundle.putInt("status", 2);
+                bundle.putString("baseFilePath", baseFile.getAbsolutePath());
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 2);
             };

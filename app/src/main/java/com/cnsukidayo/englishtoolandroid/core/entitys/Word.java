@@ -26,8 +26,8 @@ public class Word implements Serializable {
     private WordCategory category;
     private String audioPath;
     private transient volatile Uri audioUri;
-    // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中
-    private transient boolean flag = false;
+    // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中 注意现在不可以录入单词,否则会出问题
+    private boolean flag = false;
 
     public Word() {
         allChineseMap = new HashMap<>(PartOfSpeechEnum.values().length);
