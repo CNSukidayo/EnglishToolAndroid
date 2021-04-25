@@ -18,9 +18,8 @@
         <Button
             android:id="@+id/back"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="0dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.1"
             android:background="@drawable/back_fillet"
             android:gravity="left|center_vertical"
             android:minHeight="35dp"
@@ -42,6 +41,12 @@
             android:layout_height="match_parent"
             android:text="保存现场" />
 
+        <Button
+            android:id="@+id/chaosWord"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="开启混沌模式" />
+
 
         <View
             android:layout_width="0dp"
@@ -50,30 +55,30 @@
 
         </View>
 
-<!--        <TableLayout-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_weight="0.3"-->
-<!--            android:orientation="horizontal">-->
+        <!--        <TableLayout-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="center"-->
+        <!--            android:layout_weight="0.3"-->
+        <!--            android:orientation="horizontal">-->
 
-<!--            <TableRow>-->
+        <!--            <TableRow>-->
 
-<!--                <CheckBox-->
-<!--                    android:id="@+id/canScrollContainer"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:checked="true" />-->
+        <!--                <CheckBox-->
+        <!--                    android:id="@+id/canScrollContainer"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:checked="true" />-->
 
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_weight="10"-->
-<!--                    android:width="0dp"-->
-<!--                    android:text="允许中文输入框自动延伸?"-->
-<!--                    android:textColor="@color/colorBlack" />-->
-<!--            </TableRow>-->
+        <!--                <TextView-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:layout_weight="10"-->
+        <!--                    android:width="0dp"-->
+        <!--                    android:text="允许中文输入框自动延伸?"-->
+        <!--                    android:textColor="@color/colorBlack" />-->
+        <!--            </TableRow>-->
 
-<!--        </TableLayout>-->
+        <!--        </TableLayout>-->
     </LinearLayout>
 
     <TableLayout
@@ -122,19 +127,30 @@
         android:paddingTop="2dp"
         android:stretchColumns="0">
 
-        <TableRow>
+        <TableRow android:gravity="center_vertical|left">
 
             <EditText
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="2dp"
                 android:background="@drawable/english_input_fillet"
                 android:hint="在这里输入英文"
                 android:singleLine="true"
                 android:textColor="@color/colorBlack"
                 android:textCursorDrawable="@drawable/input_cursor"
+                android:textSize="28sp" />
+
+            <Button
+                android:id="@+id/clearEnglishInput"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/learn_page_clear"
+                android:gravity="center"
+                android:text="×"
+                android:textColor="@color/colorBlack"
                 android:textSize="28sp" />
         </TableRow>
     </TableLayout>

@@ -38,6 +38,7 @@ public class ParseWordsUtils {
             word.setEnglish(jsonObject.get("english", String.class));
             word.setDays(jsonObject.get("days", Integer.class));
             word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
+            word.setFlag(jsonObject.get("flag", Boolean.class));
             list.add(word);
         }
         return list;

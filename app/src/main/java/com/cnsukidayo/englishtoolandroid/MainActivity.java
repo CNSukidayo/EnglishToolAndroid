@@ -75,9 +75,21 @@ public class MainActivity extends AppCompatActivity {
         homeJsonRecyclerView.setAdapter(this.homeRecyclerViewAdapter);
 
         // 还原现场
-        restoreTheScene = findViewById(R.id.restoreTheScene);
+        restoreTheScene = startTableLayout.findViewById(R.id.restoreTheScene);
         restoreTheScene.setOnClickListener(v -> {
-            // todo 读取单词并且跳转
+            // todo 问题是现在不能保存用户的单词的英文输入
+            CacheQueue.SINGLE.doWork("allWords", () -> {
+                String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
+                List<Word> allWords = ParseWordsUtils.parseJsonAndGetWordsWithList(new File(absolutePath));
+                return allWords;
+            });
+            Intent intent = new Intent(MainActivity.this, LearnPage.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(StartMod.class.getName(), StartMod.DICTATION.name());
+            bundle.putInt("status", 2);
+            bundle.putString("baseFilePath", baseFile.getAbsolutePath());
+            intent.putExtras(bundle);
+            startActivityForResult(intent, 2);
         });
         // 基础词汇按钮
         basic = startTableLayout.findViewById(R.id.basic);

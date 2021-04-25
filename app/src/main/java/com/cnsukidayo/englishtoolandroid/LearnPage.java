@@ -40,7 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +48,14 @@ import java.util.Map;
 public class LearnPage extends AppCompatActivity {
 
     private List<Word> allWorlds;
+    private List<Word> tempAllWorlds;
     private int current = 0;
     // 内存中寄存当前用户输入的所有单词
     private Map<Integer, Word> playerWriteWordsCache;
     // 当前是标记模式的标记
     private boolean signFlag = false;
-
+    // 当前是否是标记单词混乱模式
+    private boolean chaosSignFlag = false;
     // 当前的模式状态码
     private StartMod startMod;
     // RecyclerView的Adapter
@@ -65,6 +67,8 @@ public class LearnPage extends AppCompatActivity {
     private Button save;
     // 保存现场按钮
     private Button saveScene;
+    // 混乱单词按钮
+    private Button chaosWord;
     // activityLearnPage外部的Layout
     private LinearLayout learnPage;
     // topBarLayout
@@ -85,6 +89,8 @@ public class LearnPage extends AppCompatActivity {
     private TextView progressTextView;
     // 英文输入框
     private EditText input;
+    // 清除英文输入框中的内容
+    private Button clearEnglishInput;
     // 搜索弹出的PopWindow
     private PopupWindow searchPopupWindow;
     // 上一个按钮
@@ -136,6 +142,7 @@ public class LearnPage extends AppCompatActivity {
         progressTextView = findViewById(R.id.progressTextView);
         englishAnswerTextView = findViewById(R.id.result);
         input = findViewById(R.id.input);
+        clearEnglishInput = findViewById(R.id.clearEnglishInput);
         preButton = findViewById(R.id.preButton);
         playButton = findViewById(R.id.playButton);
         nextButton = findViewById(R.id.nextButton);
@@ -153,6 +160,7 @@ public class LearnPage extends AppCompatActivity {
         checkAnswersTableLayout = findViewById(R.id.checkAnswersTableLayout);
         controllerTableRow = findViewById(R.id.controllerTableRow);
         saveScene = findViewById(R.id.saveScene);
+        chaosWord = findViewById(R.id.chaosWord);
         // 动态删除组件
         removeViewByStatus();
 
@@ -194,6 +202,27 @@ public class LearnPage extends AppCompatActivity {
 //            learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
 //            onResume();
 //        });
+        chaosWord.setOnClickListener(v -> {
+            chaosSignFlag = !chaosSignFlag;
+            if (chaosSignFlag) {
+                chaosWord.setTextColor(getResources().getColor(R.color.colorFalseColor));
+                chaosWord.setText("关闭混沌模式");
+                current = 0;
+                tempAllWorlds = allWorlds;
+                allWorlds = new ArrayList<>();
+                for (Word tempAllWorld : tempAllWorlds) {
+                    if (tempAllWorld.isFlag()) {
+                        allWorlds.add(tempAllWorld);
+                    }
+                }
+                Collections.shuffle(allWorlds);
+            } else {
+                chaosWord.setTextColor(getResources().getColor(R.color.colorBlack));
+                chaosWord.setText("开启混沌模式");
+                allWorlds = tempAllWorlds;
+            }
+
+        });
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
 
         // 检查结果按钮事件
@@ -244,6 +273,8 @@ public class LearnPage extends AppCompatActivity {
             });
             builder.show();
         });
+        // 清除输入框按钮
+        clearEnglishInput.setOnClickListener(v -> input.setText(""));
 
         preButton.setOnClickListener(getPlayClickListener());
         nextButton.setOnClickListener(getPlayClickListener());
@@ -406,8 +437,10 @@ public class LearnPage extends AppCompatActivity {
     private View.OnClickListener getPlayClickListener() {
         if (playClickListener == null) {
             playClickListener = v -> {
-                // 缓存单词PE特有,先缓存当前写好的单词再切换
-                playerWriteWordsCache.put(current, learnPageRecyclerView.getWordFromInPutText());
+                // 缓存单词PE特有,先缓存当前写好的单词再切换 但是在混乱模式时不可用
+                if (!chaosSignFlag) {
+                    playerWriteWordsCache.put(current, learnPageRecyclerView.getWordFromInPutText());
+                }
                 switch (v.getId()) {
                     case R.id.preButton:
                         if (current == 0) {
@@ -434,7 +467,9 @@ public class LearnPage extends AppCompatActivity {
                 // 不管怎样最终都要播放音效
                 asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
                 // 加载新位置的单词
-                learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(current));
+                if (!chaosSignFlag) {
+                    learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(current));
+                }
                 checkSign();
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
                 startMod.englishAnswerValueHandle(allWorlds.get(current).getEnglish(), englishAnswerTextView);
