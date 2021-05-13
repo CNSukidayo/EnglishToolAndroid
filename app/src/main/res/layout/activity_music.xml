@@ -65,82 +65,83 @@
                 android:layout_gravity="center_vertical"
                 android:singleLine="true"
                 android:text="233" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="不重复概率"
+                android:singleLine="true"
+                android:textSize="15sp" />
         </TableRow>
     </TableLayout>
-    <LinearLayout
-        android:id="@+id/musicFoot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="0,1,2">
-
-            <TableRow>
-
-                <Button
-                    android:id="@+id/randomMusicPlay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="随机选一首" />
-
-                <Button
-                    android:id="@+id/randomMusicSuspend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/check_flag_word_fillet"
-                    android:text="暂停" />
-
-                <Button
-                    android:id="@+id/randomMusicStop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="停止" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="不重复概率"
-                    android:singleLine="true"
-                    android:textSize="15sp" />
-            </TableRow>
-        </TableLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="#90909090" />
-
-        <TextView
-            android:id="@+id/musicBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="0:00/0:00"
-            android:textColor="@color/colorBlack" />
-    </LinearLayout>
-
     <RelativeLayout
         android:id="@+id/musicRelativeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:paddingEnd="10dp"
-        android:paddingBottom="10dp">
+        android:clipChildren="false">
 
         <com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView
             android:id="@+id/musicRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipChildren="false">
+            android:clipChildren="false"
+            android:paddingEnd="10dp">
 
         </com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorWhite">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/musicBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0:00/0:00"
+                    android:textColor="@color/colorBlack" />
+
+                <TableLayout
+                    android:paddingBottom="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1,2">
+
+                    <TableRow>
+
+                        <Button
+                            android:id="@+id/randomMusicPlay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="随机选一首" />
+
+                        <Button
+                            android:id="@+id/randomMusicSuspend"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/check_flag_word_fillet"
+                            android:text="暂停" />
+
+                        <Button
+                            android:id="@+id/randomMusicStop"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="停止" />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

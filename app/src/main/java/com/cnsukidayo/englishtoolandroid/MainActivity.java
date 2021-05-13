@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
                 flag = !flag;
                 if (flag) {
                     allChose.setText("全不选");

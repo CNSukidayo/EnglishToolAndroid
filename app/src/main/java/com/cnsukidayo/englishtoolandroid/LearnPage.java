@@ -343,7 +343,7 @@ public class LearnPage extends AppCompatActivity {
                         // 获取到第一个字符
                         char firstChar = word.getEnglish().charAt(0);
                         // 拿到该字符所对应的List,并将当前单词添加进去
-                        searchMapCache.get(firstChar).add(word);
+                        searchMapCache.get(Character.toLowerCase(firstChar)).add(word);
                     }
                 }
 
@@ -499,7 +499,7 @@ public class LearnPage extends AppCompatActivity {
                         asyncPlayer.play(getApplicationContext(), toPlay.getAudioUri(), false, audioAttributes);
                     }
                 });
-                resultTableRow.removeView(findViewById(R.id.progressTextView));
+                progressTextView.setText("总数:" + allWorlds.size());
                 controllerTableRow.removeView(findViewById(R.id.preButton));
                 controllerTableRow.removeView(findViewById(R.id.nextButton));
                 learnPage.removeView(checkAnswersTableLayout);
