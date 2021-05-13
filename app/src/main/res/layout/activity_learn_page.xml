@@ -29,32 +29,41 @@
             android:textStyle="bold"
             tools:ignore="RtlHardcoded" />
 
-        <Button
-            android:id="@+id/save"
+        <HorizontalScrollView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="保存" />
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/saveScene"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="保存现场" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/chaosWord"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="开启混沌模式" />
+                <Button
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="保存" />
 
+                <Button
+                    android:id="@+id/saveScene"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="保存现场" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5">
+                <Button
+                    android:id="@+id/chaosWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开启混沌模式" />
 
-        </View>
-
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:background="@drawable/stark_mark_fillet"
+                    android:text="强制显示中文" />
+            </LinearLayout>
+        </HorizontalScrollView>
         <!--        <TableLayout-->
         <!--            android:layout_width="wrap_content"-->
         <!--            android:layout_height="wrap_content"-->
