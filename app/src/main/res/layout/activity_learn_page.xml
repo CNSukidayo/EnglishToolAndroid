@@ -57,11 +57,18 @@
                     android:text="开启混沌模式" />
 
                 <CheckBox
+                    android:id="@+id/enforceChineseView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:background="@drawable/stark_mark_fillet"
-                    android:text="强制显示中文" />
+                    android:singleLine="true"
+                    android:text="显示中文  " />
+
+                <Button
+                    android:id="@+id/rangeRandom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="区域随机" />
             </LinearLayout>
         </HorizontalScrollView>
         <!--        <TableLayout-->

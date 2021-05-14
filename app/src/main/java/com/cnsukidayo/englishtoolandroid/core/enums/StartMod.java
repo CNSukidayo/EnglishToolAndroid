@@ -11,11 +11,21 @@ public enum StartMod {
         public void englishAnswerValueHandle(String englishWorld, TextView textView) {
             textView.setText("");
         }
+
+        @Override
+        public boolean isViewChinese() {
+            return false;
+        }
     },
     CHINESEENGLISHTRANSLATE {
         @Override
         public void englishAnswerValueHandle(String englishWorld, TextView textView) {
             textView.setText(englishWorld);
+        }
+
+        @Override
+        public boolean isViewChinese() {
+            return true;
         }
     };
 
@@ -26,5 +36,6 @@ public enum StartMod {
      * @param textView 显示英文单词的文本框
      */
     public abstract void englishAnswerValueHandle(String englishWorld, TextView textView);
+    public abstract boolean isViewChinese();
 
 }

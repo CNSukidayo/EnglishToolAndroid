@@ -69,6 +69,10 @@ public class LearnPage extends AppCompatActivity {
     private Button saveScene;
     // 混乱单词按钮
     private Button chaosWord;
+    // 强制显示中/英文
+    private CheckBox enforceChineseView;
+    // 区域随机
+    private Button rangeRandom;
     // activityLearnPage外部的Layout
     private LinearLayout learnPage;
     // topBarLayout
@@ -148,6 +152,7 @@ public class LearnPage extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         stopButton = findViewById(R.id.stopButton);
         markThisButton = findViewById(R.id.markThisButton);
+        rangeRandom = findViewById(R.id.rangeRandom);
         achievementTextView = findViewById(R.id.achievementTextView);
         startMarkModeButton = findViewById(R.id.startMarkModeButton);
         checkAnswersButton = findViewById(R.id.checkAnswersButton);
@@ -161,6 +166,7 @@ public class LearnPage extends AppCompatActivity {
         controllerTableRow = findViewById(R.id.controllerTableRow);
         saveScene = findViewById(R.id.saveScene);
         chaosWord = findViewById(R.id.chaosWord);
+        enforceChineseView = findViewById(R.id.enforceChineseView);
         // 动态删除组件
         removeViewByStatus();
 
@@ -223,6 +229,31 @@ public class LearnPage extends AppCompatActivity {
             }
 
         });
+
+        enforceChineseView.setOnClickListener(v -> {
+            if (startMod == StartMod.CHINESEENGLISHTRANSLATE) {
+                startMod = StartMod.DICTATION;
+            } else if (startMod == StartMod.DICTATION) {
+                startMod = StartMod.CHINESEENGLISHTRANSLATE;
+            }
+            enforceChineseView.setChecked(startMod.isViewChinese());
+        });
+
+        rangeRandom.setOnClickListener(v -> {
+            // 得到玩家输入的View
+            View rangeRandomWordInputView = getLayoutInflater().inflate(R.layout.range_random_word_input_dialog, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
+            builder.setTitle("跳转到:");
+            builder.setMessage("输入要跳转到第几个单词,输入值的区间:[1," + allWorlds.size() + "]");
+            builder.setView(rangeRandomWordInputView);
+            builder.setCancelable(false);
+            builder.setPositiveButton("确定", (dialog, which) -> {
+            });
+            builder.setNegativeButton("取消", (dialog, which) -> {
+            });
+            builder.show();
+        });
+
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
 
         // 检查结果按钮事件
@@ -488,6 +519,7 @@ public class LearnPage extends AppCompatActivity {
     // 根据当前的状态码删除组件
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void removeViewByStatus() {
+        enforceChineseView.setChecked(startMod.isViewChinese());
         playButton.setOnClickListener(getPlayClickListener());
         switch (status) {
             case 2:
