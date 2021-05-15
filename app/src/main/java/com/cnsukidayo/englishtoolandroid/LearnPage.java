@@ -1,6 +1,7 @@
 package com.cnsukidayo.englishtoolandroid;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
 import android.os.Build;
@@ -56,6 +57,8 @@ public class LearnPage extends AppCompatActivity {
     private boolean signFlag = false;
     // 当前是否是标记单词混乱模式
     private boolean chaosSignFlag = false;
+    // 当前是否是随机区域模式
+    private boolean rangeWordFlag = false;
     // 当前的模式状态码
     private StartMod startMod;
     // RecyclerView的Adapter
@@ -222,10 +225,14 @@ public class LearnPage extends AppCompatActivity {
                     }
                 }
                 Collections.shuffle(allWorlds);
+                rangeRandom.setEnabled(false);
+                rangeRandom.setTextColor(getResources().getColor(R.color.colorNotChooseJsonCheckBoxBlue));
             } else {
-                chaosWord.setTextColor(getResources().getColor(R.color.colorBlack));
+                chaosWord.setTextColor(ColorStateList.valueOf(0xFF000000));
                 chaosWord.setText("开启混沌模式");
                 allWorlds = tempAllWorlds;
+                rangeRandom.setEnabled(true);
+                rangeRandom.setTextColor(getResources().getColor(R.color.colorBlack));
             }
 
         });
@@ -240,18 +247,55 @@ public class LearnPage extends AppCompatActivity {
         });
 
         rangeRandom.setOnClickListener(v -> {
-            // 得到玩家输入的View
-            View rangeRandomWordInputView = getLayoutInflater().inflate(R.layout.range_random_word_input_dialog, null);
-            AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
-            builder.setTitle("跳转到:");
-            builder.setMessage("输入要跳转到第几个单词,输入值的区间:[1," + allWorlds.size() + "]");
-            builder.setView(rangeRandomWordInputView);
-            builder.setCancelable(false);
-            builder.setPositiveButton("确定", (dialog, which) -> {
-            });
-            builder.setNegativeButton("取消", (dialog, which) -> {
-            });
-            builder.show();
+            rangeWordFlag = !rangeWordFlag;
+            if (rangeWordFlag) {
+                // 得到玩家输入的View
+                View rangeRandomWordInputView = getLayoutInflater().inflate(R.layout.range_random_word_input_dialog, null);
+                EditText minRange = rangeRandomWordInputView.findViewById(R.id.minRange);
+                EditText maxRange = rangeRandomWordInputView.findViewById(R.id.maxRange);
+                minRange.setInputType(InputType.TYPE_CLASS_DATETIME);
+                maxRange.setInputType(InputType.TYPE_CLASS_DATETIME);
+                AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
+                builder.setTitle("区间随机:");
+                builder.setMessage("选择要单独随机的区间:[1," + allWorlds.size() + "].注意这里是闭区间");
+                builder.setView(rangeRandomWordInputView);
+                builder.setCancelable(false);
+                builder.setPositiveButton("确定", (dialog, which) -> {
+                    int min, max = 0;
+                    try {
+                        min = Integer.parseInt(minRange.getText().toString());
+                        max = Integer.parseInt(maxRange.getText().toString());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "输入错误,请输入1~" + allWorlds.size() + "之间的值", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    if (!(0 < min && max <= allWorlds.size() && min < max)) {
+                        Toast.makeText(getApplicationContext(), "输入错误,请输入1~" + allWorlds.size() + "之间的值", Toast.LENGTH_LONG).show();
+                    }
+                    current = 0;
+                    tempAllWorlds = allWorlds;
+                    allWorlds = new ArrayList<>(max - min + 1);
+                    for (int i = min; i <= max; i++) {
+                        allWorlds.add(tempAllWorlds.get(i));
+                    }
+                    Collections.shuffle(allWorlds);
+                    chaosWord.setEnabled(false);
+                    chaosWord.setTextColor(getResources().getColor(R.color.colorNotChooseJsonCheckBoxBlue));
+                    rangeRandom.setText("还原");
+                    rangeRandom.setTextColor(getResources().getColor(R.color.colorLightBlue));
+                    playButton.performClick();
+                });
+                builder.setNegativeButton("取消", (dialog, which) -> {
+                });
+                builder.show();
+            } else {
+                rangeRandom.setTextColor(ColorStateList.valueOf(0xFF000000));
+                rangeRandom.setText("区域随机");
+                allWorlds = tempAllWorlds;
+                chaosWord.setEnabled(true);
+                chaosWord.setTextColor(getResources().getColor(R.color.colorBlack));
+            }
         });
 
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
