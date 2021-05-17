@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -73,7 +74,7 @@ public class LearnPage extends AppCompatActivity {
     // 混乱单词按钮
     private Button chaosWord;
     // 强制显示中/英文
-    private CheckBox enforceChineseView;
+    private Button changeMod;
     // 区域随机
     private Button rangeRandom;
     // activityLearnPage外部的Layout
@@ -169,7 +170,7 @@ public class LearnPage extends AppCompatActivity {
         controllerTableRow = findViewById(R.id.controllerTableRow);
         saveScene = findViewById(R.id.saveScene);
         chaosWord = findViewById(R.id.chaosWord);
-        enforceChineseView = findViewById(R.id.enforceChineseView);
+        changeMod = findViewById(R.id.changeMod);
         // 动态删除组件
         removeViewByStatus();
 
@@ -237,13 +238,24 @@ public class LearnPage extends AppCompatActivity {
 
         });
 
-        enforceChineseView.setOnClickListener(v -> {
-            if (startMod == StartMod.CHINESEENGLISHTRANSLATE) {
+        changeMod.setOnClickListener(v -> {
+            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.change_mod_pop, null);
+            PopupWindow changeModPopWindow = new PopupWindow(linearLayout, changeMod.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
+            linearLayout.findViewById(R.id.dictation).setOnClickListener(v1 -> {
                 startMod = StartMod.DICTATION;
-            } else if (startMod == StartMod.DICTATION) {
+                changeModPopWindow.dismiss();
+            });
+            linearLayout.findViewById(R.id.englishChineseTranslate).setOnClickListener(v1 -> {
+                startMod = StartMod.ENGLISHCHINESETRANSLATE;
+                changeModPopWindow.dismiss();
+            });
+            linearLayout.findViewById(R.id.chineseEnglishTranslate).setOnClickListener(v1 -> {
                 startMod = StartMod.CHINESEENGLISHTRANSLATE;
-            }
-            enforceChineseView.setChecked(startMod.isViewChinese());
+                changeModPopWindow.dismiss();
+            });
+
+            changeModPopWindow.setOutsideTouchable(true);
+            changeModPopWindow.showAsDropDown(changeMod);
         });
 
         rangeRandom.setOnClickListener(v -> {
@@ -287,6 +299,7 @@ public class LearnPage extends AppCompatActivity {
                     playButton.performClick();
                 });
                 builder.setNegativeButton("取消", (dialog, which) -> {
+                    rangeWordFlag = false;
                 });
                 builder.show();
             } else {
@@ -315,6 +328,9 @@ public class LearnPage extends AppCompatActivity {
             }
             // 设置所有中文
             learnPageRecyclerView.setAnswerLabelTextFromWord(allWorlds.get(current));
+            if (startMod == StartMod.ENGLISHCHINESETRANSLATE) {
+                asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
+            }
         });
 
         // 点击跳转的按钮
@@ -540,16 +556,21 @@ public class LearnPage extends AppCompatActivity {
                         break;
                 }
                 // 不管怎样最终都要播放音效
-                asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
+                if (startMod != StartMod.ENGLISHCHINESETRANSLATE) {
+                    asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
+                }
                 // 加载新位置的单词
                 if (!chaosSignFlag) {
                     learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(current));
                 }
                 checkSign();
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
-                startMod.englishAnswerValueHandle(allWorlds.get(current).getEnglish(), englishAnswerTextView);
+                // 可以改进
+                startMod.englishAnswerValueHandle(allWorlds.get(current), englishAnswerTextView, learnPageRecyclerView);
                 achievementTextView.setText("");
-                learnPageRecyclerView.setAnswerLabelTextFromWord(null);
+                if (startMod != StartMod.ENGLISHCHINESETRANSLATE) {
+                    learnPageRecyclerView.setAnswerLabelTextFromWord(null);
+                }
                 if (status == 0) {
                     checkAnswersButton.performClick();
                 }
@@ -563,7 +584,6 @@ public class LearnPage extends AppCompatActivity {
     // 根据当前的状态码删除组件
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void removeViewByStatus() {
-        enforceChineseView.setChecked(startMod.isViewChinese());
         playButton.setOnClickListener(getPlayClickListener());
         switch (status) {
             case 2:

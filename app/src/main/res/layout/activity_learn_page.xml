@@ -57,13 +57,15 @@
                     android:layout_height="wrap_content"
                     android:text="开启混沌模式" />
 
-                <CheckBox
-                    android:id="@+id/enforceChineseView"
+                <Button
+                    android:id="@+id/changeMod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/stark_mark_fillet"
+                    android:layout_marginStart="3dp"
+                    android:background="@drawable/change_mod_fillet"
+                    android:minHeight="35dp"
                     android:singleLine="true"
-                    android:text="显示中文  " />
+                    android:text="更改模式" />
 
                 <Button
                     android:id="@+id/rangeRandom"
