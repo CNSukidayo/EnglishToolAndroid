@@ -28,7 +28,8 @@ public class Word implements Serializable {
     private transient volatile Uri audioUri;
     // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中 注意现在不可以录入单词,否则会出问题
     private boolean flag = false;
-
+    // 音频标记
+    private boolean voiceFlag = false;
     public Word() {
         allChineseMap = new HashMap<>(PartOfSpeechEnum.values().length);
     }
@@ -85,11 +86,23 @@ public class Word implements Serializable {
         setFlag(!isFlag());
     }
 
+    public void negationVoiceFlag() {
+        setVoiceFlag(!isVoiceFlag());
+    }
+
     public Uri getAudioUri() {
         if (audioUri == null) {
             audioUri = Uri.fromFile(new File(audioPath));
         }
         return audioUri;
+    }
+
+    public boolean isVoiceFlag() {
+        return voiceFlag;
+    }
+
+    public void setVoiceFlag(boolean voiceFlag) {
+        this.voiceFlag = voiceFlag;
     }
 
     /**
@@ -116,7 +129,9 @@ public class Word implements Serializable {
                 ", days=" + days +
                 ", category=" + category +
                 ", audioPath='" + audioPath + '\'' +
+                ", audioUri=" + audioUri +
                 ", flag=" + flag +
+                ", voiceFlag=" + voiceFlag +
                 '}';
     }
 }

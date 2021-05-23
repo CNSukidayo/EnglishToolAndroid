@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
+import com.cnsukidayo.englishtoolandroid.core.enums.MarkMode;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
 import com.cnsukidayo.englishtoolandroid.core.learn.SearchPoPRecyclerViewAdapter;
@@ -46,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LearnPage extends AppCompatActivity {
 
@@ -55,7 +57,7 @@ public class LearnPage extends AppCompatActivity {
     // 内存中寄存当前用户输入的所有单词
     private Map<Integer, Word> playerWriteWordsCache;
     // 当前是标记模式的标记
-    private boolean signFlag = false;
+    private MarkMode markMode = MarkMode.NONE;
     // 当前是否是标记单词混乱模式
     private boolean chaosSignFlag = false;
     // 当前是否是随机区域模式
@@ -75,6 +77,10 @@ public class LearnPage extends AppCompatActivity {
     private Button chaosWord;
     // 强制显示中/英文
     private Button changeMod;
+    // 预览英文标记
+    private boolean preViewEnglishFlag;
+    // 是否是第一次查看答案
+    private boolean isFirstCheckAnswer;
     // 区域随机
     private Button rangeRandom;
     // activityLearnPage外部的Layout
@@ -240,6 +246,14 @@ public class LearnPage extends AppCompatActivity {
 
         changeMod.setOnClickListener(v -> {
             LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.change_mod_pop, null);
+            TextView preViewEnglish = linearLayout.findViewById(R.id.preViewEnglish);
+            if (preViewEnglishFlag) {
+                preViewEnglish.setBackgroundResource(R.drawable.pre_view_english_mod_fillet);
+                preViewEnglish.setText("预览英文");
+            } else {
+                preViewEnglish.setBackgroundResource(R.drawable.dispre_view_english_mod_fillet);
+                preViewEnglish.setText("不预览英文");
+            }
             PopupWindow changeModPopWindow = new PopupWindow(linearLayout, changeMod.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             linearLayout.findViewById(R.id.dictation).setOnClickListener(v1 -> {
                 startMod = StartMod.DICTATION;
@@ -253,7 +267,16 @@ public class LearnPage extends AppCompatActivity {
                 startMod = StartMod.CHINESEENGLISHTRANSLATE;
                 changeModPopWindow.dismiss();
             });
-
+            preViewEnglish.setOnClickListener(v12 -> {
+                preViewEnglishFlag = !preViewEnglishFlag;
+                if (preViewEnglishFlag) {
+                    preViewEnglish.setBackgroundResource(R.drawable.pre_view_english_mod_fillet);
+                    preViewEnglish.setText("预览英文");
+                } else {
+                    preViewEnglish.setBackgroundResource(R.drawable.dispre_view_english_mod_fillet);
+                    preViewEnglish.setText("不预览英文");
+                }
+            });
             changeModPopWindow.setOutsideTouchable(true);
             changeModPopWindow.showAsDropDown(changeMod);
         });
@@ -278,17 +301,19 @@ public class LearnPage extends AppCompatActivity {
                         min = Integer.parseInt(minRange.getText().toString());
                         max = Integer.parseInt(maxRange.getText().toString());
                     } catch (NumberFormatException e) {
+                        rangeWordFlag = false;
                         e.printStackTrace();
                         Toast.makeText(getApplicationContext(), "输入错误,请输入1~" + allWorlds.size() + "之间的值", Toast.LENGTH_LONG).show();
                         return;
                     }
                     if (!(0 < min && max <= allWorlds.size() && min < max)) {
                         Toast.makeText(getApplicationContext(), "输入错误,请输入1~" + allWorlds.size() + "之间的值", Toast.LENGTH_LONG).show();
+                        rangeWordFlag = false;
                     }
                     current = 0;
                     tempAllWorlds = allWorlds;
                     allWorlds = new ArrayList<>(max - min + 1);
-                    for (int i = min; i <= max; i++) {
+                    for (int i = min; i < max; i++) {
                         allWorlds.add(tempAllWorlds.get(i));
                     }
                     Collections.shuffle(allWorlds);
@@ -312,7 +337,6 @@ public class LearnPage extends AppCompatActivity {
         });
 
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
-
         // 检查结果按钮事件
         checkAnswersButton.setOnClickListener(v -> {
             String answerText = allWorlds.get(current).getEnglish();
@@ -326,11 +350,14 @@ public class LearnPage extends AppCompatActivity {
                 achievementTextView.setText("错误");
                 achievementTextView.setTextColor(getResources().getColor(R.color.colorFalseColor));
             }
-            // 设置所有中文
-            learnPageRecyclerView.setAnswerLabelTextFromWord(allWorlds.get(current));
+            // 设置所有中文(除非当前是预览英文模式)
+            if (!preViewEnglishFlag || isFirstCheckAnswer) {
+                learnPageRecyclerView.setAnswerLabelTextFromWord(allWorlds.get(current));
+            }
             if (startMod == StartMod.ENGLISHCHINESETRANSLATE) {
                 asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
             }
+            isFirstCheckAnswer = true;
         });
 
         // 点击跳转的按钮
@@ -371,18 +398,36 @@ public class LearnPage extends AppCompatActivity {
         nextButton.setOnClickListener(getPlayClickListener());
 
         markThisButton.setOnClickListener(v -> {
-            allWorlds.get(current).negationFlag();
+            if (allWorlds.get(current).isFlag()) {
+                allWorlds.get(current).setFlag(false);
+                allWorlds.get(current).setVoiceFlag(true);
+            } else if (allWorlds.get(current).isVoiceFlag()) {
+                allWorlds.get(current).setFlag(false);
+                allWorlds.get(current).setVoiceFlag(false);
+            }else {
+                allWorlds.get(current).setFlag(true);
+                allWorlds.get(current).setVoiceFlag(false);
+            }
             checkSign();
         });
-
         startMarkModeButton.setOnClickListener(v -> {
-            signFlag = !signFlag;
-            if (signFlag) {
+            // 可以利用设计模式优化
+            if (markMode == MarkMode.NONE) {
+                markMode = MarkMode.WORD;
+            } else if (markMode == MarkMode.WORD) {
+                markMode = MarkMode.VOICEWORD;
+            } else {
+                markMode = MarkMode.NONE;
+            }
+            if (markMode == MarkMode.WORD) {
                 startMarkModeButton.setText("关闭标记模式");
                 startMarkModeButton.setTextColor(getResources().getColor(R.color.colorStartFlagMode));
-            } else {
+            } else if (markMode == MarkMode.NONE) {
                 startMarkModeButton.setText("开启标记模式");
                 startMarkModeButton.setTextColor(getResources().getColor(R.color.colorBlack));
+            } else {
+                startMarkModeButton.setText("关闭标记模式");
+                startMarkModeButton.setTextColor(getResources().getColor(R.color.colorLightBlue));
             }
         });
         // 保存现场
@@ -534,24 +579,30 @@ public class LearnPage extends AppCompatActivity {
                 }
                 switch (v.getId()) {
                     case R.id.preButton:
+                        isFirstCheckAnswer = false;
                         if (current == 0) {
                             current = allWorlds.size() - 1;
                         } else {
                             current--;
                         }
 
-                        if (signFlag) {
+                        if (markMode == MarkMode.WORD) {
                             current = find(-1);
+                        } else if (markMode == MarkMode.VOICEWORD) {
+                            current = find2(-1);
                         }
                         break;
                     case R.id.nextButton:
+                        isFirstCheckAnswer = false;
                         if (current == allWorlds.size() - 1) {
                             current = 0;
                         } else {
                             current++;
                         }
-                        if (signFlag) {
+                        if (markMode == MarkMode.WORD) {
                             current = find(1);
+                        } else if (markMode == MarkMode.VOICEWORD) {
+                            current = find2(1);
                         }
                         break;
                 }
@@ -620,11 +671,29 @@ public class LearnPage extends AppCompatActivity {
         return current;
     }
 
+    // 寻找下一个标记的单词(可优化)
+    private int find2(int sign) {
+        for (int i = current; i < allWorlds.size() && i > -1; i += sign) {
+            if (allWorlds.get(i).isVoiceFlag()) {
+                return i;
+            }
+        }
+        for (int i = sign == 1 ? 0 : allWorlds.size() - 1; i < allWorlds.size() && i > -1; i += sign) {
+            if (allWorlds.get(i).isVoiceFlag()) {
+                return i;
+            }
+        }
+        return current;
+    }
+
     // 检查当前单词是否被标记
     private void checkSign() {
         if (allWorlds.get(current).isFlag()) {
             markThisButton.setText("解除标记");
             markThisButton.setBackgroundResource(R.drawable.check_flag_word_fillet);
+        } else if (allWorlds.get(current).isVoiceFlag()) {
+            markThisButton.setText("解除标记");
+            markThisButton.setBackgroundResource(R.drawable.check_voice_flag_word_fillet);
         } else {
             markThisButton.setText("标记单词");
             markThisButton.setBackgroundResource(R.drawable.flag_word_fillet);
