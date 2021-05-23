@@ -47,7 +47,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LearnPage extends AppCompatActivity {
 
@@ -313,7 +312,7 @@ public class LearnPage extends AppCompatActivity {
                     current = 0;
                     tempAllWorlds = allWorlds;
                     allWorlds = new ArrayList<>(max - min + 1);
-                    for (int i = min; i < max; i++) {
+                    for (int i = min - 1; i < max; i++) {
                         allWorlds.add(tempAllWorlds.get(i));
                     }
                     Collections.shuffle(allWorlds);
@@ -404,7 +403,7 @@ public class LearnPage extends AppCompatActivity {
             } else if (allWorlds.get(current).isVoiceFlag()) {
                 allWorlds.get(current).setFlag(false);
                 allWorlds.get(current).setVoiceFlag(false);
-            }else {
+            } else {
                 allWorlds.get(current).setFlag(true);
                 allWorlds.get(current).setVoiceFlag(false);
             }
