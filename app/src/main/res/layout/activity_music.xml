@@ -66,10 +66,12 @@
                 android:singleLine="true"
                 android:text="233" />
 
-            <EditText
+            <Button
+                android:id="@+id/musicModeChange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="不重复概率"
+                android:text="模式选择"
+                android:textColor="@color/colorBlack"
                 android:singleLine="true"
                 android:textSize="15sp" />
         </TableRow>

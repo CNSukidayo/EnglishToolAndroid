@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/colorWhite">
+
+    <TextView
+        android:id="@+id/musicSequential"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="顺序播放"
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <TextView
+        android:id="@+id/musicCompleteRandom"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="全随机"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+    <TextView
+        android:id="@+id/musicIncompleteRandom"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="假全随机"
+        android:background="@drawable/pre_view_english_mod_fillet"
+        android:textColor="@color/colorBlack"
+        android:textSize="16sp" />
+</LinearLayout>

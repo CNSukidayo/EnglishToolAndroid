@@ -14,6 +14,7 @@ import com.cnsukidayo.englishtoolandroid.R;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -28,6 +29,10 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
         this.allMusic = allMusic;
         allChooseDaysButton = new HashMap<>(allMusic.length);
         this.consumer = consumer;
+    }
+
+    public MusicRecyclerViewAdapter(List<File> allMusic, Context context, Consumer<File> consumer) {
+        this((File[]) allMusic.toArray(),context,consumer);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
