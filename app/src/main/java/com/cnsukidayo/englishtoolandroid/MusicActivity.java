@@ -97,7 +97,6 @@ public class MusicActivity extends AppCompatActivity {
         randomMusicStop.setOnClickListener(view -> mediaPlayer.stop());
         mediaPlayer.setOnCompletionListener(mediaPlayer -> {
             if (mediaPlayer.getCurrentPosition() != 0) {
-
                 playMusicStrategy();
             }
         });
@@ -183,6 +182,7 @@ public class MusicActivity extends AppCompatActivity {
         pausePosition = 0;
         randomMusicSuspend.setBackgroundResource(R.drawable.check_flag_word_fillet);
         randomMusicSuspend.setText("暂停播放");
+        musicRecyclerViewAdapter.changeBackGroundByID(findIDByFile(file));
     }
 
     @Override
@@ -215,6 +215,17 @@ public class MusicActivity extends AppCompatActivity {
         int result;
         while (exclude == (result = random.nextInt(max))) ;
         return result;
+    }
+
+    // 根据File对象获取到ID
+    private int findIDByFile(File file) {
+        for (int i = 0; i < allMusicList.size(); i++) {
+            // 这里可以直接地址等没有什么关系,反而效率高
+            if (allMusicList.get(i) == file) {
+                return i;
+            }
+        }
+        return 0;
     }
 
 }

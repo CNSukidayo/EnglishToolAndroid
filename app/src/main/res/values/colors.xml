@@ -8,11 +8,13 @@
     <color name="colorChooseJsonButtonRed">#FF2F6B</color>
     <color name="colorChooseJsonCheckBoxBlue">#4AFFE6</color>
     <color name="colorNotChooseJsonCheckBoxBlue">@android:color/darker_gray</color>
+    <color name="colorGray">#FF888888</color>
     <color name="colorLeanPageBackGround">#6DFF56</color>
     <color name="colorTrueColor">#336DFF</color>
     <color name="colorFalseColor">#FF0000</color>
     <color name="colorLightBlue">#0051FF</color>
     <color name="colorLightOrange">#FFD700</color>
+    <color name="colorDarkBlue">#48CBDB</color>
     <color name="colorDottedLine">#FF78FA</color>
     <color name="colorDarkMagic">#B20DFF</color>
     <color name="colorWhite">#FFFFFF</color>

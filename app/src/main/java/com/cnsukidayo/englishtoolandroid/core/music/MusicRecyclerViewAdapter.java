@@ -1,5 +1,6 @@
 package com.cnsukidayo.englishtoolandroid.core.music;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -22,10 +23,11 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
 
     private LayoutInflater layoutInflater;
     private final File[] allMusic;
-    private Map<Integer, ChoseMusicButton> allChooseDaysButton;
     private Consumer<File> consumer;
+    private Map<Integer, ChoseMusicButton> allChooseDaysButton;
 
-    public MusicRecyclerViewAdapter(File[] allMusic, Context context, Consumer<File> consumer) {
+    @SuppressLint("UseSparseArrays")
+    private MusicRecyclerViewAdapter(File[] allMusic, Context context, Consumer<File> consumer) {
         layoutInflater = LayoutInflater.from(context);
         this.allMusic = allMusic;
         allChooseDaysButton = new HashMap<>(allMusic.length);
@@ -55,7 +57,11 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
         }
         holder.choseMusicButton.setMusicFile(allMusic[position]);
         holder.choseMusicButton.setConsumer(consumer);
+        holder.choseMusicButton.setId(position);
         allChooseDaysButton.put(position, holder.choseMusicButton);
+        if (position == preMusicID) {
+            holder.choseMusicButton.getNameTextView().setTextColor(layoutInflater.getContext().getResources().getColor(R.color.colorDottedLine));
+        }
     }
 
     @Override
@@ -66,6 +72,29 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
     @Override
     public int getItemCount() {
         return this.allMusic.length;
+    }
+
+    /**
+     * 根据音乐ID修改当前正在播放的音乐的背景框,表明当前音乐正在被播放.
+     *
+     * @param id 音乐ID
+     */
+    private int preMusicID = -1;
+
+    public void changeBackGroundByID(int id) {
+        if (preMusicID != -1) {
+            ChoseMusicButton choseMusicButton = allChooseDaysButton.get(preMusicID);
+            if (choseMusicButton != null) {
+                choseMusicButton.getNameTextView().setTextColor(layoutInflater.getContext().getResources().getColor(R.color.colorBlack));
+                choseMusicButton.getAuthorTextView().setTextColor(layoutInflater.getContext().getResources().getColor(R.color.colorGray));
+            }
+        }
+        preMusicID = id;
+        ChoseMusicButton choseMusicButton = allChooseDaysButton.get(preMusicID);
+        if (choseMusicButton != null) {
+            choseMusicButton.getNameTextView().setTextColor(layoutInflater.getContext().getResources().getColor(R.color.colorDottedLine));
+            choseMusicButton.getAuthorTextView().setTextColor(layoutInflater.getContext().getResources().getColor(R.color.colorDarkBlue));
+        }
     }
 
     class LinearViewHolder extends RecyclerView.ViewHolder {

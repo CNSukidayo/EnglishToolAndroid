@@ -10,6 +10,8 @@ import java.io.File;
 import java.util.function.Consumer;
 
 public class ChoseMusicButton {
+    // 每个歌曲独有的ID
+    private int id;
     private TextView nameTextView;
     private TextView authorTextView;
     private File musicFile;
@@ -58,5 +60,13 @@ public class ChoseMusicButton {
 
     public void setConsumer(Consumer<File> consumer) {
         this.consumer = consumer;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
