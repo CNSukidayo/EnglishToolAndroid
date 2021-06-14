@@ -19,18 +19,14 @@ import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
-import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
 import com.cnsukidayo.englishtoolandroid.core.home.HomeRecyclerViewAdapter;
 import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
-import com.cnsukidayo.englishtoolandroid.utils.SortUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import cn.hutool.core.lang.Assert;
 
@@ -41,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
     // 还原现场
     private LinearLayout restoreTheScene;
-    // 基础单词按钮
-    private Button basic;
     // 搜搜单词
     private Button searchWord;
     // 听写模式
@@ -91,38 +85,10 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtras(bundle);
             startActivityForResult(intent, 2);
         });
-        // 基础词汇按钮
-        basic = startTableLayout.findViewById(R.id.basic);
-        basic.setOnClickListener(view -> {
-            File[] allBasicFile = new File(baseFile, File.separator + "basic").listFiles();
-            SortUtils.sortWordWithName(allBasicFile);
-            CacheQueue.SINGLE.doWork("allWords", () -> {
-                String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "basic.json";
-                Map<String, Word> parseWords = ParseWordsUtils.parseJsonAndGetWordsWithMap(new File(absolutePath));
-
-                List<Word> allWords = new ArrayList<>(allBasicFile.length);
-                for (File file : allBasicFile) {
-                    Word word = new Word();
-                    word.setAudioPath(file.getAbsolutePath());
-                    word.setEnglish(file.getName().substring(0, file.getName().indexOf('.')).replaceAll("[0-9]", ""));
-                    word.setDays(-1);
-                    word.setCategory(WordCategory.BASIS);
-                    word.setAllChineseMap(parseWords.getOrDefault(word.getEnglish(), new Word()).getAllChineseMap());
-                    allWords.add(word);
-                }
-                return allWords;
-            });
-
-            Intent intent = new Intent(MainActivity.this, LearnPage.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
-            bundle.putInt("status", 0);
-            intent.putExtras(bundle);
-            startActivityForResult(intent, 0);
-        });
         // 搜搜单词
         searchWord = startTableLayout.findViewById(R.id.searchWord);
         searchWord.setOnClickListener(v -> {
+            // todo 这和地方写的有问题
             CacheQueue.SINGLE.doWork("allWords", () -> homeRecyclerViewAdapter.getAllWords());
             Intent intent = new Intent(MainActivity.this, LearnPage.class);
             Bundle bundle = new Bundle();

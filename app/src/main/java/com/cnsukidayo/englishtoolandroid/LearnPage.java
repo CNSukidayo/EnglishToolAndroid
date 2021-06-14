@@ -68,8 +68,6 @@ public class LearnPage extends AppCompatActivity {
 
     // 返回上一级按钮
     private Button backButton;
-    // 保存按钮
-    private Button save;
     // 保存现场按钮
     private Button saveScene;
     // 混乱单词按钮
@@ -166,7 +164,6 @@ public class LearnPage extends AppCompatActivity {
         startMarkModeButton = findViewById(R.id.startMarkModeButton);
         checkAnswersButton = findViewById(R.id.checkAnswersButton);
         backButton = findViewById(R.id.back);
-        save = findViewById(R.id.save);
 //        canScrollContainerCheckBox = findViewById(R.id.canScrollContainer);
         resultTableRow = findViewById(R.id.resultTableRow);
         learnPage = findViewById(R.id.learnPage);
@@ -192,26 +189,6 @@ public class LearnPage extends AppCompatActivity {
 
             });
             builder.show();
-        });
-        save.setOnClickListener(v -> {
-            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "basic.json";
-            playerWriteWordsCache.put(current, learnPageRecyclerView.getWordFromInPutText());
-            for (int i = 0; i < allWorlds.size(); i++) {
-                Word tempWord = playerWriteWordsCache.get(i);
-                if (tempWord == null || tempWord.noChinese()) {
-                    continue;
-                }
-                Word word = allWorlds.get(i);
-                word.setAllChineseMap(tempWord.getAllChineseMap());
-            }
-            try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
-                Gson gson = new Gson();
-                String result = gson.toJson(allWorlds);
-                writer.write(result.getBytes(StandardCharsets.UTF_8));
-                writer.flush();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
         });
 //        canScrollContainerCheckBox.setOnClickListener(v -> {
 //            learnPageRecyclerView.setCanScrollContainer(canScrollContainerCheckBox.isChecked());
@@ -637,7 +614,6 @@ public class LearnPage extends AppCompatActivity {
         playButton.setOnClickListener(getPlayClickListener());
         switch (status) {
             case 2:
-                topBarLinearLayout.removeView(save);
                 break;
             case 1:
                 playButton.setOnClickListener(v -> {
@@ -645,11 +621,11 @@ public class LearnPage extends AppCompatActivity {
                         asyncPlayer.play(getApplicationContext(), toPlay.getAudioUri(), false, audioAttributes);
                     }
                 });
+                topBarLinearLayout.removeView(findViewById(R.id.topBarHorizontalScrollView));
                 progressTextView.setText("总数:" + allWorlds.size());
                 controllerTableRow.removeView(findViewById(R.id.preButton));
                 controllerTableRow.removeView(findViewById(R.id.nextButton));
                 learnPage.removeView(checkAnswersTableLayout);
-                topBarLinearLayout.removeView(findViewById(R.id.save));
                 input.setHint("搜索");
                 break;
         }

@@ -7,14 +7,15 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".SearchWord"></activity>
 
         <receiver android:name=".core.music.MediaButtonReceiver">
             <intent-filter>
@@ -23,8 +24,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MusicActivity"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".MusicActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".LearnPage"
             android:windowSoftInputMode="stateHidden" />

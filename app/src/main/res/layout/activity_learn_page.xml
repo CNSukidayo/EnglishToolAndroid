@@ -30,6 +30,7 @@
             tools:ignore="RtlHardcoded" />
 
         <HorizontalScrollView
+            android:id="@+id/topBarHorizontalScrollView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingEnd="10dp">
@@ -38,12 +39,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="保存" />
 
                 <Button
                     android:id="@+id/saveScene"

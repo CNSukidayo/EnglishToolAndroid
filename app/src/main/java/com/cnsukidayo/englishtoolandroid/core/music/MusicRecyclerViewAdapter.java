@@ -24,7 +24,8 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
     private final File[] allMusic;
     private Map<Integer, ChoseMusicButton> allChooseDaysButton;
     private Consumer<File> consumer;
-    public MusicRecyclerViewAdapter(File[] allMusic, Context context,Consumer<File> consumer) {
+
+    public MusicRecyclerViewAdapter(File[] allMusic, Context context, Consumer<File> consumer) {
         layoutInflater = LayoutInflater.from(context);
         this.allMusic = allMusic;
         allChooseDaysButton = new HashMap<>(allMusic.length);
@@ -32,7 +33,7 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
     }
 
     public MusicRecyclerViewAdapter(List<File> allMusic, Context context, Consumer<File> consumer) {
-        this((File[]) allMusic.toArray(),context,consumer);
+        this((File[]) allMusic.toArray(), context, consumer);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -45,8 +46,13 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
     @Override
     public void onBindViewHolder(@NonNull LinearViewHolder holder, int position) {
         String fileName = allMusic[position].getName().substring(0, allMusic[position].getName().indexOf('.'));
-        holder.choseMusicButton.getNameTextView().setText(fileName.substring(0, fileName.indexOf('-')));
-        holder.choseMusicButton.getAuthorTextView().setText(fileName.substring(fileName.indexOf("-") + 2));
+        int lastIndex = fileName.indexOf('-');
+        if (lastIndex != -1) {
+            holder.choseMusicButton.getNameTextView().setText(fileName.substring(0, lastIndex) + "**" + position);
+            holder.choseMusicButton.getAuthorTextView().setText(fileName.substring(lastIndex + 2));
+        } else {
+            holder.choseMusicButton.getNameTextView().setText(fileName);
+        }
         holder.choseMusicButton.setMusicFile(allMusic[position]);
         holder.choseMusicButton.setConsumer(consumer);
         allChooseDaysButton.put(position, holder.choseMusicButton);
