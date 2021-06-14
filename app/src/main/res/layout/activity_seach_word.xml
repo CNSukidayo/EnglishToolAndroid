@@ -1,9 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/learnPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchWord">
+    android:background="@color/colorLeanPageBackGround"
+    android:orientation="vertical"
+    tools:context=".LearnPage">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageButton
+        android:id="@+id/back"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="40dp"
+        android:layout_height="45dp"
+        android:background="@drawable/back_fillet"
+        android:gravity="center"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back"
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0">
+
+        <TableRow android:id="@+id/resultTableRow">
+
+            <TextView
+                android:id="@+id/result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/result_search_word_fillet"
+                android:text="结果"
+                android:textColor="@color/colorBlack"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/progressTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="1/100"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp" />
+
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:stretchColumns="0">
+
+        <TableRow android:gravity="center_vertical|left">
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/english_input_fillet"
+                android:hint="在这里输入英文"
+                android:singleLine="true"
+                android:textColor="@color/colorBlack"
+                android:textCursorDrawable="@drawable/input_cursor"
+                android:textSize="28sp" />
+
+            <Button
+                android:id="@+id/clearEnglishInput"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/learn_page_clear"
+                android:gravity="center"
+                android:text="×"
+                android:textColor="@color/colorBlack"
+                android:textSize="28sp" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0,1,">
+
+        <TableRow android:id="@+id/controllerTableRow">
+
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="播放" />
+
+            <Button
+                android:id="@+id/stopButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="暂停" />
+
+            <TextView
+                android:id="@+id/day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="占位符"
+                android:layout_gravity="center"
+                android:textColor="@color/colorBlack"
+                android:textSize="26sp" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-2dp"
+        android:clipChildren="false">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/chineseInputRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </RelativeLayout>
+    </HorizontalScrollView>
+
+
+</LinearLayout>

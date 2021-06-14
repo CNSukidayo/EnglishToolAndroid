@@ -28,19 +28,25 @@ public class ParseWordsUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static List<Word> parseJsonAndGetWordsWithList(File filePath) {
+    public static List<Word> parseJsonAndGetWordsWithList(File... filePath) {
         List<Word> list = new ArrayList<>();
-        List<JSONObject> jsonObjects = parseJsonToJsonObjectArrayNotNull(filePath);
-        for (JSONObject jsonObject : jsonObjects) {
-            Word word = new Word();
-            word.setAllChineseMap(((Map<PartOfSpeechEnum, String>) jsonObject.get("allChineseMap", Map.class)));
-            word.setAudioPath(jsonObject.get("audioPath", String.class));
-            word.setEnglish(jsonObject.get("english", String.class));
-            word.setDays(jsonObject.get("days", Integer.class));
-            word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
-            word.setFlag(jsonObject.get("flag", Boolean.class));
-            word.setVoiceFlag(jsonObject.get("voiceFlag", Boolean.class));
-            list.add(word);
+        List<JSONObject> jsonObjects = null;
+        for (File file : filePath) {
+            jsonObjects = parseJsonToJsonObjectArrayNotNull(file);
+            if (jsonObjects != null) {
+                for (JSONObject jsonObject : jsonObjects) {
+                    Word word = new Word();
+                    word.setAllChineseMap(((Map<PartOfSpeechEnum, String>) jsonObject.get("allChineseMap", Map.class)));
+                    word.setAudioPath(jsonObject.get("audioPath", String.class));
+                    word.setEnglish(jsonObject.get("english", String.class));
+                    word.setDays(jsonObject.get("days", Integer.class));
+                    word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
+                    // 效率不高
+                    word.setFlag(jsonObject.get("flag", Boolean.class) == null ? false : jsonObject.get("flag", Boolean.class));
+                    word.setVoiceFlag(jsonObject.get("voiceFlag", Boolean.class) == null ? false : jsonObject.get("voiceFlag", Boolean.class));
+                    list.add(word);
+                }
+            }
         }
         return list;
     }

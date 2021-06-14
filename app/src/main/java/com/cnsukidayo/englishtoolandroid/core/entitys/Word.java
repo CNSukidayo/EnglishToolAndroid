@@ -30,6 +30,7 @@ public class Word implements Serializable {
     private boolean flag = false;
     // 音频标记
     private boolean voiceFlag = false;
+
     public Word() {
         allChineseMap = new HashMap<>(PartOfSpeechEnum.values().length);
     }
@@ -92,6 +93,20 @@ public class Word implements Serializable {
 
     public Uri getAudioUri() {
         if (audioUri == null) {
+            audioUri = Uri.fromFile(new File(audioPath));
+        }
+        return audioUri;
+    }
+
+    /**
+     * 有些时候会没有基础路径
+     *
+     * @param baseFile
+     * @return
+     */
+    public Uri getAudioUri(String baseFile) {
+        if (audioUri == null) {
+            audioPath = baseFile + File.separator + audioPath.replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\', '/');
             audioUri = Uri.fromFile(new File(audioPath));
         }
         return audioUri;

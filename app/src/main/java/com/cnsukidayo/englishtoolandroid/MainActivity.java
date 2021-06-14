@@ -88,12 +88,9 @@ public class MainActivity extends AppCompatActivity {
         // 搜搜单词
         searchWord = startTableLayout.findViewById(R.id.searchWord);
         searchWord.setOnClickListener(v -> {
-            // todo 这和地方写的有问题
-            CacheQueue.SINGLE.doWork("allWords", () -> homeRecyclerViewAdapter.getAllWords());
-            Intent intent = new Intent(MainActivity.this, LearnPage.class);
+            Intent intent = new Intent(MainActivity.this, SearchWord.class);
             Bundle bundle = new Bundle();
-            bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
-            bundle.putInt("status", 1);
+            bundle.putString("baseFilePath", baseFile.getAbsolutePath() + File.separator);
             intent.putExtras(bundle);
             startActivityForResult(intent, 1);
         });
