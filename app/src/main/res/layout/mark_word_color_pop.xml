@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/markRED"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@android:color/holo_red_light" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <View
+        android:id="@+id/markGREEN"
+        style=""
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@color/colorThisFlagTrue" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <View
+        android:id="@+id/markBLUE"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@android:color/holo_blue_light" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <View
+        android:id="@+id/markYELLOW"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@color/colorYellow" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <View
+        android:id="@+id/markVIOLET"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@color/colorViolet" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <View
+        android:id="@+id/markORANGE"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@android:color/holo_orange_light" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <View
+        android:id="@+id/markPRINK"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:background="@color/colorPink" />
+
+
+</LinearLayout>

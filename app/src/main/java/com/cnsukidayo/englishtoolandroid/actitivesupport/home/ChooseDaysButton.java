@@ -1,4 +1,4 @@
-package com.cnsukidayo.englishtoolandroid.core.home;
+package com.cnsukidayo.englishtoolandroid.actitivesupport.home;
 
 import android.os.Build;
 import android.widget.CheckBox;

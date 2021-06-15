@@ -40,10 +40,9 @@ public class ParseWordsUtils {
                     word.setAudioPath(jsonObject.get("audioPath", String.class));
                     word.setEnglish(jsonObject.get("english", String.class));
                     word.setDays(jsonObject.get("days", Integer.class));
+                    // todo 反序列化的问题
                     word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
                     // 效率不高
-                    word.setFlag(jsonObject.get("flag", Boolean.class) == null ? false : jsonObject.get("flag", Boolean.class));
-                    word.setVoiceFlag(jsonObject.get("voiceFlag", Boolean.class) == null ? false : jsonObject.get("voiceFlag", Boolean.class));
                     list.add(word);
                 }
             }

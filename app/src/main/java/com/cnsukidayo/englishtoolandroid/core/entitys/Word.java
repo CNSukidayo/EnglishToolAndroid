@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.cnsukidayo.englishtoolandroid.core.enums.PartOfSpeechEnum;
 import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
+import com.cnsukidayo.englishtoolandroid.core.enums.WordMarkColor;
 
 import java.io.File;
 import java.io.Serializable;
@@ -26,10 +27,8 @@ public class Word implements Serializable {
     private WordCategory category;
     private String audioPath;
     private transient volatile Uri audioUri;
-    // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中 注意现在不可以录入单词,否则会出问题
-    private boolean flag = false;
-    // 音频标记
-    private boolean voiceFlag = false;
+    // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中
+    private WordMarkColor wordMarkColor = WordMarkColor.GREEN;
 
     public Word() {
         allChineseMap = new HashMap<>(PartOfSpeechEnum.values().length);
@@ -75,27 +74,19 @@ public class Word implements Serializable {
         this.allChineseMap = allChineseMap;
     }
 
-    public boolean isFlag() {
-        return flag;
-    }
-
-    public void setFlag(boolean flag) {
-        this.flag = flag;
-    }
-
-    public void negationFlag() {
-        setFlag(!isFlag());
-    }
-
-    public void negationVoiceFlag() {
-        setVoiceFlag(!isVoiceFlag());
-    }
-
     public Uri getAudioUri() {
         if (audioUri == null) {
             audioUri = Uri.fromFile(new File(audioPath));
         }
         return audioUri;
+    }
+
+    public WordMarkColor getWordMarkColor() {
+        return wordMarkColor;
+    }
+
+    public void setWordMarkColor(WordMarkColor wordMarkColor) {
+        this.wordMarkColor = wordMarkColor;
     }
 
     /**
@@ -110,14 +101,6 @@ public class Word implements Serializable {
             audioUri = Uri.fromFile(new File(audioPath));
         }
         return audioUri;
-    }
-
-    public boolean isVoiceFlag() {
-        return voiceFlag;
-    }
-
-    public void setVoiceFlag(boolean voiceFlag) {
-        this.voiceFlag = voiceFlag;
     }
 
     /**
@@ -145,8 +128,7 @@ public class Word implements Serializable {
                 ", category=" + category +
                 ", audioPath='" + audioPath + '\'' +
                 ", audioUri=" + audioUri +
-                ", flag=" + flag +
-                ", voiceFlag=" + voiceFlag +
+                ", wordMarkColor=" + wordMarkColor +
                 '}';
     }
 }

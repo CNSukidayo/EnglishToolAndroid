@@ -1,5 +1,6 @@
 package com.cnsukidayo.englishtoolandroid;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.media.AsyncPlayer;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,11 +26,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LearnPageRecyclerView;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModeButtonBackGroundChangeHandler;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModePopWindow;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkWordButtonBackGroundChangeHandler;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkWordPopWindow;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
-import com.cnsukidayo.englishtoolandroid.core.enums.MarkMode;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
-import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
+import com.cnsukidayo.englishtoolandroid.core.enums.WordMarkColor;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -42,6 +46,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class LearnPage extends AppCompatActivity {
 
@@ -50,8 +55,6 @@ public class LearnPage extends AppCompatActivity {
     private int current = 0;
     // 内存中寄存当前用户输入的所有单词
     private Map<Integer, Word> playerWriteWordsCache;
-    // 当前是标记模式的标记
-    private MarkMode markMode = MarkMode.NONE;
     // 当前是否是标记单词混乱模式
     private boolean chaosSignFlag = false;
     // 当前是否是随机区域模式
@@ -75,8 +78,6 @@ public class LearnPage extends AppCompatActivity {
     private boolean isFirstCheckAnswer;
     // 区域随机
     private Button rangeRandom;
-    // 是否允许可变宽度
-    private CheckBox canScrollContainerCheckBox;
     // 结果回显TextView
     private TextView englishAnswerTextView;
     // 显示正确或错误的结果TextView
@@ -87,8 +88,6 @@ public class LearnPage extends AppCompatActivity {
     private EditText input;
     // 清除英文输入框中的内容
     private Button clearEnglishInput;
-    // 搜索弹出的PopWindow
-    private PopupWindow searchPopupWindow;
     // 上一个按钮
     private Button preButton;
     // 播放按钮
@@ -107,7 +106,14 @@ public class LearnPage extends AppCompatActivity {
     private int status;
     // baseFile
     private File baseFile;
+    // 改变单词背景色的处理器
+    private MarkWordButtonBackGroundChangeHandler markWordButtonBackGroundChangeHandler;
+    // 改变标记模式背景色的处理器
+    private MarkModeButtonBackGroundChangeHandler markModeButtonBackGroundChangeHandler;
+    // 用单词颜色来作为当前标记模式的,默认是不开启标记模式
+    private WordMarkColor nowMarkMode = WordMarkColor.BLACK;
 
+    @SuppressLint("ShowToast")
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +158,8 @@ public class LearnPage extends AppCompatActivity {
         saveScene = findViewById(R.id.saveScene);
         chaosWord = findViewById(R.id.chaosWord);
         changeMod = findViewById(R.id.changeMod);
-
+        markWordButtonBackGroundChangeHandler = new MarkWordButtonBackGroundChangeHandler(markThisButton);
+        markModeButtonBackGroundChangeHandler = new MarkModeButtonBackGroundChangeHandler(startMarkModeButton);
         backButton.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
             builder.setMessage("确认返回主页?");
@@ -176,7 +183,7 @@ public class LearnPage extends AppCompatActivity {
                 tempAllWorlds = allWorlds;
                 allWorlds = new ArrayList<>();
                 for (Word tempAllWorld : tempAllWorlds) {
-                    if (tempAllWorld.isFlag()) {
+                    if (tempAllWorld.getWordMarkColor() == WordMarkColor.RED) {
                         allWorlds.add(tempAllWorld);
                     }
                 }
@@ -346,38 +353,34 @@ public class LearnPage extends AppCompatActivity {
         preButton.setOnClickListener(getPlayClickListener());
         nextButton.setOnClickListener(getPlayClickListener());
         playButton.setOnClickListener(getPlayClickListener());
-        markThisButton.setOnClickListener(v -> {
-            if (allWorlds.get(current).isFlag()) {
-                allWorlds.get(current).setFlag(false);
-                allWorlds.get(current).setVoiceFlag(true);
-            } else if (allWorlds.get(current).isVoiceFlag()) {
-                allWorlds.get(current).setFlag(false);
-                allWorlds.get(current).setVoiceFlag(false);
-            } else {
-                allWorlds.get(current).setFlag(true);
-                allWorlds.get(current).setVoiceFlag(false);
-            }
-            checkSign();
+        // 解除标记
+        markThisButton.setOnClickListener(v -> markWordButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.GREEN));
+        // 标记单词
+        markThisButton.setOnLongClickListener(v -> {
+            LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_word_color_pop, null);
+            PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, markThisButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
+            MarkWordPopWindow markWordPopWindow = new MarkWordPopWindow(changeMusicModPop, changeModPopWindow, allWorlds.get(current), markWordButtonBackGroundChangeHandler);
+            changeModPopWindow.setOutsideTouchable(true);
+            changeModPopWindow.setFocusable(true);
+            changeModPopWindow.showAsDropDown(markThisButton);
+            return true;
         });
-        startMarkModeButton.setOnClickListener(v -> {
-            // 可以利用设计模式优化
-            if (markMode == MarkMode.NONE) {
-                markMode = MarkMode.WORD;
-            } else if (markMode == MarkMode.WORD) {
-                markMode = MarkMode.VOICEWORD;
-            } else {
-                markMode = MarkMode.NONE;
-            }
-            if (markMode == MarkMode.WORD) {
-                startMarkModeButton.setText("关闭标记模式");
-                startMarkModeButton.setTextColor(getResources().getColor(R.color.colorStartFlagMode));
-            } else if (markMode == MarkMode.NONE) {
-                startMarkModeButton.setText("开启标记模式");
-                startMarkModeButton.setTextColor(getResources().getColor(R.color.colorBlack));
-            } else {
-                startMarkModeButton.setText("关闭标记模式");
-                startMarkModeButton.setTextColor(getResources().getColor(R.color.colorLightBlue));
-            }
+        // 解除标记模式
+        startMarkModeButton.setOnClickListener(v -> markModeButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.GREEN));
+        // 开启标记模式
+        startMarkModeButton.setOnLongClickListener(v -> {
+            LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_word_color_pop, null);
+            PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, startMarkModeButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
+            MarkModePopWindow markWordPopWindow = new MarkModePopWindow(changeMusicModPop, changeModPopWindow, new Consumer<WordMarkColor>() {
+                @Override
+                public void accept(WordMarkColor wordMarkColor) {
+                    nowMarkMode = wordMarkColor;
+                }
+            }, markModeButtonBackGroundChangeHandler);
+            changeModPopWindow.setOutsideTouchable(true);
+            changeModPopWindow.setFocusable(true);
+            changeModPopWindow.showAsDropDown(markThisButton);
+            return true;
         });
         // 保存现场
         saveScene.setOnClickListener(v -> {
@@ -390,6 +393,11 @@ public class LearnPage extends AppCompatActivity {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+        });
+        englishAnswerTextView.setOnClickListener(v -> {
+            Word word = allWorlds.get(current);
+            Toast toast = Toast.makeText(getApplicationContext(), "第" + word.getDays() + "天", Toast.LENGTH_SHORT);
+            toast.show();
         });
     }
 
@@ -417,12 +425,8 @@ public class LearnPage extends AppCompatActivity {
                         } else {
                             current--;
                         }
-
-                        if (markMode == MarkMode.WORD) {
-                            current = find(-1);
-                        } else if (markMode == MarkMode.VOICEWORD) {
-                            current = find2(-1);
-                        }
+                        // todo 这里先写死了
+                        find(-1, WordMarkColor.RED);
                         break;
                     case R.id.nextButton:
                         isFirstCheckAnswer = false;
@@ -431,11 +435,7 @@ public class LearnPage extends AppCompatActivity {
                         } else {
                             current++;
                         }
-                        if (markMode == MarkMode.WORD) {
-                            current = find(1);
-                        } else if (markMode == MarkMode.VOICEWORD) {
-                            current = find2(1);
-                        }
+                        find(1, WordMarkColor.RED);
                         break;
                 }
                 // 不管怎样最终都要播放音效
@@ -446,7 +446,7 @@ public class LearnPage extends AppCompatActivity {
                 if (!chaosSignFlag) {
                     learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(current));
                 }
-                checkSign();
+                markWordButtonBackGroundChangeHandler.changeButtonBackGround(allWorlds.get(current).getWordMarkColor());
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
                 // 可以改进
                 startMod.englishAnswerValueHandle(allWorlds.get(current), englishAnswerTextView, learnPageRecyclerView);
@@ -462,49 +462,25 @@ public class LearnPage extends AppCompatActivity {
         return playClickListener;
     }
 
-    // 寻找下一个标记的单词
-    private int find(int sign) {
+    /**
+     * 寻找下一个标记单词
+     *
+     * @param sign          -1代表先向前找,1代表先向后找
+     * @param wordMarkColor 传入当前找哪个颜色的单词
+     * @return 返回单词索引
+     */
+    private int find(int sign, WordMarkColor wordMarkColor) {
         for (int i = current; i < allWorlds.size() && i > -1; i += sign) {
-            if (allWorlds.get(i).isFlag()) {
+            if (allWorlds.get(i).getWordMarkColor() == wordMarkColor) {
                 return i;
             }
         }
         for (int i = sign == 1 ? 0 : allWorlds.size() - 1; i < allWorlds.size() && i > -1; i += sign) {
-            if (allWorlds.get(i).isFlag()) {
+            if (allWorlds.get(i).getWordMarkColor() == wordMarkColor) {
                 return i;
             }
         }
         return current;
     }
-
-    // 寻找下一个标记的单词(可优化)
-    private int find2(int sign) {
-        for (int i = current; i < allWorlds.size() && i > -1; i += sign) {
-            if (allWorlds.get(i).isVoiceFlag()) {
-                return i;
-            }
-        }
-        for (int i = sign == 1 ? 0 : allWorlds.size() - 1; i < allWorlds.size() && i > -1; i += sign) {
-            if (allWorlds.get(i).isVoiceFlag()) {
-                return i;
-            }
-        }
-        return current;
-    }
-
-    // 检查当前单词是否被标记
-    private void checkSign() {
-        if (allWorlds.get(current).isFlag()) {
-            markThisButton.setText("解除标记");
-            markThisButton.setBackgroundResource(R.drawable.check_flag_word_fillet);
-        } else if (allWorlds.get(current).isVoiceFlag()) {
-            markThisButton.setText("解除标记");
-            markThisButton.setBackgroundResource(R.drawable.check_voice_flag_word_fillet);
-        } else {
-            markThisButton.setText("标记单词");
-            markThisButton.setBackgroundResource(R.drawable.flag_word_fillet);
-        }
-    }
-
 
 }

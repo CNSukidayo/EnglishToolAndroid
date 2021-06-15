@@ -6,7 +6,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
-import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LearnPageRecyclerView;
 
 /**
  * 开始的模式枚举

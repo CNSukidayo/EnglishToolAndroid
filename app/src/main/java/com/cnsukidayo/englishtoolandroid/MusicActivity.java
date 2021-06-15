@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.enums.MusicMode;
-import com.cnsukidayo.englishtoolandroid.core.music.ChangeMusicModelPopWindow;
-import com.cnsukidayo.englishtoolandroid.core.music.MusicRecyclerViewAdapter;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.music.ChangeMusicModelPopWindow;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.music.MusicRecyclerViewAdapter;
 import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 
@@ -128,7 +128,7 @@ public class MusicActivity extends AppCompatActivity {
             if (pausePosition == 0) {
                 pausePosition = mediaPlayer.getCurrentPosition();
                 mediaPlayer.pause();
-                randomMusicSuspend.setBackgroundResource(R.drawable.flag_word_fillet);
+                randomMusicSuspend.setBackgroundResource(R.drawable.mark_word_green);
                 randomMusicSuspend.setText("继续播放");
             } else {
                 mediaPlayer.seekTo(pausePosition);

@@ -1,4 +1,4 @@
-package com.cnsukidayo.englishtoolandroid.core.learn;
+package com.cnsukidayo.englishtoolandroid.actitivesupport.searchword;
 
 import android.content.Context;
 import android.os.Build;

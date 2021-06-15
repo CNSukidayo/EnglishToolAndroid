@@ -1,4 +1,4 @@
-package com.cnsukidayo.englishtoolandroid.core.music;
+package com.cnsukidayo.englishtoolandroid.actitivesupport.music;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

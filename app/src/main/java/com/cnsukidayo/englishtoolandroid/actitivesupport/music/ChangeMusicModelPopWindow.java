@@ -1,5 +1,6 @@
-package com.cnsukidayo.englishtoolandroid.core.music;
+package com.cnsukidayo.englishtoolandroid.actitivesupport.music;
 
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -16,6 +17,8 @@ public class ChangeMusicModelPopWindow {
     private TextView musicIncompleteRandom;
     // 当前的播放模式,常驻内存
     private MusicMode musicMode = MusicMode.COMPLETERANDOM;
+    // 监听,常驻内存,避免重复创建
+    private View.OnClickListener onClickListener;
 
     // 当前播放音乐的模式
     public ChangeMusicModelPopWindow() {
@@ -40,18 +43,29 @@ public class ChangeMusicModelPopWindow {
             musicCompleteRandom.setBackground(null);
             musicIncompleteRandom.setBackground(linearLayout.getResources().getDrawable(R.drawable.pre_view_english_mod_fillet));
         }
-        musicSequential.setOnClickListener(v12 -> {
-            musicMode = MusicMode.SEQUENTIAL;
-            popupWindow.dismiss();
-        });
-        musicCompleteRandom.setOnClickListener(v1 -> {
-            musicMode = MusicMode.COMPLETERANDOM;
-            popupWindow.dismiss();
-        });
-        musicIncompleteRandom.setOnClickListener(v13 -> {
-            musicMode = MusicMode.INCOMPLETERANDOM;
-            popupWindow.dismiss();
-        });
+        musicSequential.setOnClickListener(v12 -> popupWindow.dismiss());
+        musicCompleteRandom.setOnClickListener(v1 -> popupWindow.dismiss());
+        musicIncompleteRandom.setOnClickListener(v13 -> getOnClickListener());
+    }
+
+    private View.OnClickListener getOnClickListener() {
+        if (this.onClickListener == null) {
+            onClickListener = v -> {
+                popupWindow.dismiss();
+                switch (v.getId()) {
+                    case R.id.musicSequential:
+                        musicMode = MusicMode.SEQUENTIAL;
+                        break;
+                    case R.id.musicCompleteRandom:
+                        musicMode = MusicMode.COMPLETERANDOM;
+                        break;
+                    case R.id.musicIncompleteRandom:
+                        musicMode = MusicMode.INCOMPLETERANDOM;
+                        break;
+                }
+            };
+        }
+        return onClickListener;
     }
 
     public MusicMode getMusicMode() {

@@ -1,4 +1,4 @@
-package com.cnsukidayo.englishtoolandroid.core.learn;
+package com.cnsukidayo.englishtoolandroid.actitivesupport.learn;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

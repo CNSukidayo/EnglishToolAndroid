@@ -1,4 +1,4 @@
-package com.cnsukidayo.englishtoolandroid.core.home;
+package com.cnsukidayo.englishtoolandroid.actitivesupport.home;
 
 import android.content.Context;
 import android.os.Build;

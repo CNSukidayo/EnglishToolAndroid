@@ -24,8 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
-import com.cnsukidayo.englishtoolandroid.core.learn.LearnPageRecyclerView;
-import com.cnsukidayo.englishtoolandroid.core.learn.SearchPoPRecyclerViewAdapter;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LearnPageRecyclerView;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.searchword.SearchPoPRecyclerViewAdapter;
 import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
 

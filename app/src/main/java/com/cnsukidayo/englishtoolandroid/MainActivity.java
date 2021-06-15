@@ -19,7 +19,7 @@ import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
-import com.cnsukidayo.englishtoolandroid.core.home.HomeRecyclerViewAdapter;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.home.HomeRecyclerViewAdapter;
 import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;

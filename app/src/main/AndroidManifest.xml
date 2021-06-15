@@ -18,7 +18,7 @@
         <activity android:name=".SearchWord"
             android:windowSoftInputMode="stateHidden"/>
 
-        <receiver android:name=".core.music.MediaButtonReceiver">
+        <receiver android:name=".actitivesupport.music.MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
