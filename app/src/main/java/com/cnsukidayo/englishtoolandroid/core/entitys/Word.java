@@ -28,7 +28,7 @@ public class Word implements Serializable {
     private String audioPath;
     private transient volatile Uri audioUri;
     // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中
-    private WordMarkColor wordMarkColor = WordMarkColor.GREEN;
+    private WordMarkColor wordMarkColor = WordMarkColor.DEFAULT;
 
     public Word() {
         allChineseMap = new HashMap<>(PartOfSpeechEnum.values().length);
@@ -75,9 +75,6 @@ public class Word implements Serializable {
     }
 
     public Uri getAudioUri() {
-        if (audioUri == null) {
-            audioUri = Uri.fromFile(new File(audioPath));
-        }
         return audioUri;
     }
 
@@ -97,8 +94,7 @@ public class Word implements Serializable {
      */
     public Uri getAudioUri(String baseFile) {
         if (audioUri == null) {
-            audioPath = baseFile + File.separator + audioPath.replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\', '/');
-            audioUri = Uri.fromFile(new File(audioPath));
+            audioUri = Uri.fromFile(new File(baseFile + File.separator + audioPath.replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\', '/')));
         }
         return audioUri;
     }

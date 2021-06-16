@@ -24,13 +24,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     private LayoutInflater layoutInflater;
     private final File[] allJsonDaysFile;
-    private final File baseFile;
     private Map<Integer, ChooseDaysButton> allChooseDaysButton;
 
     public HomeRecyclerViewAdapter(File baseFile, Context context) {
         layoutInflater = LayoutInflater.from(context);
         this.allJsonDaysFile = new File(baseFile, File.separator + EnglishToolProperties.json).listFiles();
-        this.baseFile = baseFile;
         this.allChooseDaysButton = new HashMap<>(allJsonDaysFile.length);
     }
 
@@ -44,8 +42,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     public void onBindViewHolder(@NonNull LinearViewHolder holder, int position) {
         holder.chooseDaysButton.getTextView().setText(allJsonDaysFile[position].getName().substring(0, allJsonDaysFile[position].getName().indexOf('.')));
         holder.chooseDaysButton.setThisDayJsonFile(allJsonDaysFile[position]);
-        holder.chooseDaysButton.setBasePath(baseFile.getAbsolutePath());
-
         allChooseDaysButton.put(position, holder.chooseDaysButton);
     }
 

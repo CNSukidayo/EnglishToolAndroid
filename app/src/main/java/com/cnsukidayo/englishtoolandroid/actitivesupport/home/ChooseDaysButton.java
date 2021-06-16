@@ -9,21 +9,15 @@ import androidx.annotation.RequiresApi;
 
 import com.cnsukidayo.englishtoolandroid.R;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
-import com.cnsukidayo.englishtoolandroid.core.enums.PartOfSpeechEnum;
-import com.cnsukidayo.englishtoolandroid.core.enums.WordCategory;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
-
-import cn.hutool.json.JSONObject;
 
 /**
  * 选择第几天的符合组件
  */
 public class ChooseDaysButton {
-    private String basePath;
     private CheckBox checkBox;
     private TextView textView;
     private LinearLayout linearLayout;
@@ -67,32 +61,15 @@ public class ChooseDaysButton {
         }
         getThisDayWords(list);
     }
+
     /**
      * 得到当前按钮所对应的所有单词
      *
      * @param list 添加到哪个集合
-     * @return 返回的List保证不会空, 但有可能是空集.
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getThisDayWords(List<Word> list) {
-        List<JSONObject> jsonObjects = parseJsonToJsonObjectArrayNotNull();
-        for (JSONObject jsonObject : jsonObjects) {
-            Word word = new Word();
-            word.setAllChineseMap(((Map<PartOfSpeechEnum, String>) jsonObject.get("allChineseMap", Map.class)));
-            word.setAudioPath(this.basePath + File.separator + jsonObject.get("audioPath", String.class).replace("D:\\Java Project\\English Tool\\resource\\", "").replace('\\', '/'));
-            word.setEnglish(jsonObject.get("english", String.class));
-            word.setDays(jsonObject.get("days", Integer.class));
-            word.setCategory(WordCategory.valueOf(jsonObject.get("category", String.class)));
-            list.add(word);
-        }
-    }
-
-    /**
-     * @return 返回的List保证不会空, 但有可能是空集.
-     */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public List<JSONObject> parseJsonToJsonObjectArrayNotNull() {
-        return ParseWordsUtils.parseJsonToJsonObjectArrayNotNull(thisDayJsonFile.getAbsoluteFile());
+        ParseWordsUtils.parseJsonAndGetWordsWithList(list,thisDayJsonFile.getAbsoluteFile());
     }
 
     public CheckBox getCheckBox() {
@@ -135,7 +112,4 @@ public class ChooseDaysButton {
         return choseFlag;
     }
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
 }

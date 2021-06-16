@@ -199,7 +199,6 @@ public class SearchWord extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void showPopWindow(String searchText, boolean isBF) {
         // 得到匹配当前当前首字母的List
-        // todo 第几天
         List<Word> matchListWord;
         if (!isBF) {
             matchListWord = searchMapCache.get(searchText.charAt(0));

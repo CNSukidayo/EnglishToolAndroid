@@ -26,6 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.ChangePlayModePopWindow;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.ChaosWordPopWindow;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LearnPageRecyclerView;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModeButtonBackGroundChangeHandler;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModePopWindow;
@@ -54,9 +56,8 @@ public class LearnPage extends AppCompatActivity {
     private List<Word> tempAllWorlds;
     private int current = 0;
     // 内存中寄存当前用户输入的所有单词
-    private Map<Integer, Word> playerWriteWordsCache;
+    private Map<String, Word> playerWriteWordsCache;
     // 当前是否是标记单词混乱模式
-    private boolean chaosSignFlag = false;
     // 当前是否是随机区域模式
     private boolean rangeWordFlag = false;
     // 当前的模式状态码
@@ -111,7 +112,9 @@ public class LearnPage extends AppCompatActivity {
     // 改变标记模式背景色的处理器
     private MarkModeButtonBackGroundChangeHandler markModeButtonBackGroundChangeHandler;
     // 用单词颜色来作为当前标记模式的,默认是不开启标记模式
-    private WordMarkColor nowMarkMode = WordMarkColor.BLACK;
+    private WordMarkColor nowMarkMode = WordMarkColor.DEFAULT;
+    // 用单词颜色作为当前混沌模式的标记,默认是不开启的
+    private WordMarkColor nowChaosMode = WordMarkColor.DEFAULT;
 
     @SuppressLint("ShowToast")
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -174,69 +177,44 @@ public class LearnPage extends AppCompatActivity {
             });
             builder.show();
         });
+        // 混沌模式
         chaosWord.setOnClickListener(v -> {
-            chaosSignFlag = !chaosSignFlag;
-            if (chaosSignFlag) {
-                chaosWord.setTextColor(getResources().getColor(R.color.colorFalseColor));
-                chaosWord.setText("关闭混沌模式");
-                current = 0;
-                tempAllWorlds = allWorlds;
-                allWorlds = new ArrayList<>();
-                for (Word tempAllWorld : tempAllWorlds) {
-                    if (tempAllWorld.getWordMarkColor() == WordMarkColor.RED) {
-                        allWorlds.add(tempAllWorld);
+            LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.chaos_mode_color_pop, null);
+            PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, chaosWord.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
+            ChaosWordPopWindow markWordPopWindow = new ChaosWordPopWindow(changeMusicModPop, changeModPopWindow, chaosWord, new Consumer<WordMarkColor>() {
+                @Override
+                public void accept(WordMarkColor wordMarkColor) {
+                    nowChaosMode = wordMarkColor;
+                    if (nowChaosMode != WordMarkColor.DEFAULT) {
+                        tempAllWorlds = allWorlds;
+                        allWorlds = new ArrayList<>();
+                        for (Word tempAllWorld : tempAllWorlds) {
+                            if (tempAllWorld.getWordMarkColor() == nowChaosMode) {
+                                allWorlds.add(tempAllWorld);
+                            }
+                        }
+                        if (allWorlds.size() == 0) {
+                            nowChaosMode = WordMarkColor.DEFAULT;
+                            allWorlds = tempAllWorlds;
+                            chaosWord.setTextColor(chaosWord.getResources().getColor(R.color.colorBlack));
+                            Toast.makeText(getApplicationContext(), "没有该种类的单词", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        current = 0;
+                        Collections.shuffle(allWorlds);
+                        rangeRandom.setEnabled(false);
+                        rangeRandom.setTextColor(getResources().getColor(R.color.colorNotChooseJsonCheckBoxBlue));
+                    } else {
+                        allWorlds = tempAllWorlds;
+                        rangeRandom.setEnabled(true);
+                        rangeRandom.setTextColor(getResources().getColor(R.color.colorBlack));
                     }
-                }
-                Collections.shuffle(allWorlds);
-                rangeRandom.setEnabled(false);
-                rangeRandom.setTextColor(getResources().getColor(R.color.colorNotChooseJsonCheckBoxBlue));
-            } else {
-                chaosWord.setTextColor(ColorStateList.valueOf(0xFF000000));
-                chaosWord.setText("开启混沌模式");
-                allWorlds = tempAllWorlds;
-                rangeRandom.setEnabled(true);
-                rangeRandom.setTextColor(getResources().getColor(R.color.colorBlack));
-            }
-
-        });
-
-        changeMod.setOnClickListener(v -> {
-            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.change_mod_pop, null);
-            TextView preViewEnglish = linearLayout.findViewById(R.id.preViewEnglish);
-            if (preViewEnglishFlag) {
-                preViewEnglish.setBackgroundResource(R.drawable.pre_view_english_mod_fillet);
-                preViewEnglish.setText("预览英文");
-            } else {
-                preViewEnglish.setBackgroundResource(R.drawable.dispre_view_english_mod_fillet);
-                preViewEnglish.setText("不预览英文");
-            }
-            PopupWindow changeModPopWindow = new PopupWindow(linearLayout, changeMod.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
-            linearLayout.findViewById(R.id.dictation).setOnClickListener(v1 -> {
-                startMod = StartMod.DICTATION;
-                changeModPopWindow.dismiss();
-            });
-            linearLayout.findViewById(R.id.englishChineseTranslate).setOnClickListener(v1 -> {
-                startMod = StartMod.ENGLISHCHINESETRANSLATE;
-                changeModPopWindow.dismiss();
-            });
-            linearLayout.findViewById(R.id.chineseEnglishTranslate).setOnClickListener(v1 -> {
-                startMod = StartMod.CHINESEENGLISHTRANSLATE;
-                changeModPopWindow.dismiss();
-            });
-            preViewEnglish.setOnClickListener(v12 -> {
-                preViewEnglishFlag = !preViewEnglishFlag;
-                if (preViewEnglishFlag) {
-                    preViewEnglish.setBackgroundResource(R.drawable.pre_view_english_mod_fillet);
-                    preViewEnglish.setText("预览英文");
-                } else {
-                    preViewEnglish.setBackgroundResource(R.drawable.dispre_view_english_mod_fillet);
-                    preViewEnglish.setText("不预览英文");
                 }
             });
             changeModPopWindow.setOutsideTouchable(true);
-            changeModPopWindow.showAsDropDown(changeMod);
+            changeModPopWindow.setFocusable(true);
+            changeModPopWindow.showAsDropDown(chaosWord);
         });
-
         rangeRandom.setOnClickListener(v -> {
             rangeWordFlag = !rangeWordFlag;
             if (rangeWordFlag) {
@@ -311,7 +289,7 @@ public class LearnPage extends AppCompatActivity {
                 learnPageRecyclerView.setAnswerLabelTextFromWord(allWorlds.get(current));
             }
             if (startMod == StartMod.ENGLISHCHINESETRANSLATE) {
-                asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
+                asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(baseFile.getAbsolutePath()), false, audioAttributes);
             }
             isFirstCheckAnswer = true;
         });
@@ -353,34 +331,46 @@ public class LearnPage extends AppCompatActivity {
         preButton.setOnClickListener(getPlayClickListener());
         nextButton.setOnClickListener(getPlayClickListener());
         playButton.setOnClickListener(getPlayClickListener());
+
+        // 更改当前模式
+        changeMod.setOnClickListener(v -> {
+            LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.change_mod_pop, null);
+            PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, changeMod.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
+            ChangePlayModePopWindow markWordPopWindow = new ChangePlayModePopWindow(changeMusicModPop, changeModPopWindow,
+                    startMod1 -> startMod = startMod1, aBoolean -> preViewEnglishFlag = aBoolean);
+            markWordPopWindow.changeIsPreEnglish(preViewEnglishFlag);
+            changeModPopWindow.setOutsideTouchable(true);
+            changeModPopWindow.setFocusable(true);
+            changeModPopWindow.showAsDropDown(changeMod);
+        });
+
         // 解除标记
-        markThisButton.setOnClickListener(v -> markWordButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.GREEN));
-        // 标记单词
         markThisButton.setOnLongClickListener(v -> {
+            markWordButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.DEFAULT);
+            return true;
+        });
+        // 标记单词
+        markThisButton.setOnClickListener(v -> {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_word_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, markThisButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             MarkWordPopWindow markWordPopWindow = new MarkWordPopWindow(changeMusicModPop, changeModPopWindow, allWorlds.get(current), markWordButtonBackGroundChangeHandler);
             changeModPopWindow.setOutsideTouchable(true);
             changeModPopWindow.setFocusable(true);
             changeModPopWindow.showAsDropDown(markThisButton);
-            return true;
         });
         // 解除标记模式
-        startMarkModeButton.setOnClickListener(v -> markModeButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.GREEN));
-        // 开启标记模式
         startMarkModeButton.setOnLongClickListener(v -> {
-            LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_word_color_pop, null);
+            markModeButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.DEFAULT);
+            return true;
+        });
+        // 开启标记模式
+        startMarkModeButton.setOnClickListener(v -> {
+            LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_mode_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, startMarkModeButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
-            MarkModePopWindow markWordPopWindow = new MarkModePopWindow(changeMusicModPop, changeModPopWindow, new Consumer<WordMarkColor>() {
-                @Override
-                public void accept(WordMarkColor wordMarkColor) {
-                    nowMarkMode = wordMarkColor;
-                }
-            }, markModeButtonBackGroundChangeHandler);
+            MarkModePopWindow markWordPopWindow = new MarkModePopWindow(changeMusicModPop, changeModPopWindow, wordMarkColor -> nowMarkMode = wordMarkColor, markModeButtonBackGroundChangeHandler);
             changeModPopWindow.setOutsideTouchable(true);
             changeModPopWindow.setFocusable(true);
-            changeModPopWindow.showAsDropDown(markThisButton);
-            return true;
+            changeModPopWindow.showAsDropDown(startMarkModeButton);
         });
         // 保存现场
         saveScene.setOnClickListener(v -> {
@@ -414,8 +404,8 @@ public class LearnPage extends AppCompatActivity {
         if (playClickListener == null) {
             playClickListener = v -> {
                 // 缓存单词PE特有,先缓存当前写好的单词再切换 但是在混乱模式时不可用
-                if (!chaosSignFlag) {
-                    playerWriteWordsCache.put(current, learnPageRecyclerView.getWordFromInPutText());
+                if (nowChaosMode == WordMarkColor.DEFAULT) {
+                    playerWriteWordsCache.put(allWorlds.get(current).getEnglish(), learnPageRecyclerView.getWordFromInPutText());
                 }
                 switch (v.getId()) {
                     case R.id.preButton:
@@ -425,8 +415,9 @@ public class LearnPage extends AppCompatActivity {
                         } else {
                             current--;
                         }
-                        // todo 这里先写死了
-                        find(-1, WordMarkColor.RED);
+                        if (nowMarkMode != WordMarkColor.DEFAULT) {
+                            current = find(-1, nowMarkMode);
+                        }
                         break;
                     case R.id.nextButton:
                         isFirstCheckAnswer = false;
@@ -435,17 +426,17 @@ public class LearnPage extends AppCompatActivity {
                         } else {
                             current++;
                         }
-                        find(1, WordMarkColor.RED);
+                        if (nowMarkMode != WordMarkColor.DEFAULT) {
+                            current = find(1, nowMarkMode);
+                        }
                         break;
                 }
                 // 不管怎样最终都要播放音效
                 if (startMod != StartMod.ENGLISHCHINESETRANSLATE) {
-                    asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(), false, audioAttributes);
+                    asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(baseFile.getAbsolutePath()), false, audioAttributes);
                 }
                 // 加载新位置的单词
-                if (!chaosSignFlag) {
-                    learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(current));
-                }
+                learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(allWorlds.get(current).getEnglish()));
                 markWordButtonBackGroundChangeHandler.changeButtonBackGround(allWorlds.get(current).getWordMarkColor());
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
                 // 可以改进

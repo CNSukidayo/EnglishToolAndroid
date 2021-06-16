@@ -7,12 +7,12 @@
     android:theme="@android:style/Theme.Translucent">
 
     <TextView
-        android:id="@+id/markGREEN"
+        android:id="@+id/unMark"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:background="@color/colorThisFlagTrue"
+        android:background="@color/colorGray"
         android:gravity="center"
-        android:text="解除标记"
+        android:text="关闭标记模式"
         android:textColor="@color/colorBlack"
         android:textSize="20sp" />
 

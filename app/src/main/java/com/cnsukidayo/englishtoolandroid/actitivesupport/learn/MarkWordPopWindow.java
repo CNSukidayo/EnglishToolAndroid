@@ -51,7 +51,7 @@ public class MarkWordPopWindow {
         YELLOW = linearLayout.findViewById(R.id.markYELLOW);
         VIOLET = linearLayout.findViewById(R.id.markVIOLET);
         ORANGE = linearLayout.findViewById(R.id.markORANGE);
-        PINK = linearLayout.findViewById(R.id.markPRINK);
+        PINK = linearLayout.findViewById(R.id.markPINK);
     }
 
     private void event() {
@@ -73,7 +73,7 @@ public class MarkWordPopWindow {
                         this.word.setWordMarkColor(WordMarkColor.RED);
                         break;
                     case R.id.markGREEN:
-                        this.word.setWordMarkColor(WordMarkColor.GREEN);
+                        this.word.setWordMarkColor(WordMarkColor.DEFAULT);
                         break;
                     case R.id.markBLUE:
                         this.word.setWordMarkColor(WordMarkColor.BLUE);
@@ -84,7 +84,10 @@ public class MarkWordPopWindow {
                     case R.id.markVIOLET:
                         this.word.setWordMarkColor(WordMarkColor.VIOLET);
                         break;
-                    case R.id.markPRINK:
+                    case R.id.markORANGE:
+                        this.word.setWordMarkColor(WordMarkColor.ORANGE);
+                        break;
+                    case R.id.markPINK:
                         this.word.setWordMarkColor(WordMarkColor.PINK);
                         break;
                 }

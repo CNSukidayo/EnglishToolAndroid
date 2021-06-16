@@ -20,7 +20,7 @@ public class MarkModeButtonBackGroundChangeHandler {
                 this.markModeButton.setTextColor(markModeButton.getResources().getColor(R.color.android_holo_red_light));
                 markModeButton.setText(unMark);
                 break;
-            case BLACK:
+            case DEFAULT:
                 markModeButton.setText(mark);
                 this.markModeButton.setTextColor(markModeButton.getResources().getColor(R.color.colorBlack));
                 break;

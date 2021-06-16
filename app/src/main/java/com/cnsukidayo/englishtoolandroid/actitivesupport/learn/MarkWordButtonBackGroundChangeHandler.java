@@ -20,7 +20,7 @@ public class MarkWordButtonBackGroundChangeHandler {
                 this.markButton.setBackgroundResource(R.drawable.mark_word_red);
                 markButton.setText(unMark);
                 break;
-            case GREEN:
+            case DEFAULT:
                 markButton.setText(mark);
                 this.markButton.setBackgroundResource(R.drawable.mark_word_green);
                 break;

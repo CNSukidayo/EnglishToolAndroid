@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString(StartMod.class.getName(), StartMod.DICTATION.name());
             bundle.putInt("status", 2);
-            bundle.putString("baseFilePath", baseFile.getAbsolutePath());
+            bundle.putString("baseFilePath", baseFile.getAbsolutePath() + File.separator);
             intent.putExtras(bundle);
             startActivityForResult(intent, 2);
         });
