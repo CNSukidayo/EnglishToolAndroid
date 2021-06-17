@@ -5,10 +5,14 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +21,8 @@ import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.entitys.WordInclude;
 
 import java.util.function.Consumer;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludePopRecyclerViewAdapter.LinearViewHolder> {
 
@@ -27,6 +33,7 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
     private final Runnable refreshList;
     private final Context context;
     private Consumer<Word> consumer;
+    private Runnable saveIncludeRunnable;
     /**
      * @param context            上下文用于获取各种组件
      * @param includeWordManager 单词管理对象
@@ -75,6 +82,7 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
             wordInclude.addWord(includeWordManager.getToAddWordTag());
             holder.inCludeWordElement.getIncludeTitle().setText(wordInclude.getTitle());
             holder.inCludeWordElement.getIncludeDescribe().setText(wordInclude.getDescribe());
+            saveIncludeRunnable.run();
             if (holder.inCludeWordElement.isOpen()) {
                 open(holder);
             }
@@ -127,7 +135,44 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
             } else {
                 open(holder);
             }
+        });
+        // 修改标题
+        holder.inCludeWordElement.getEdit().setOnClickListener(v -> {
+            View addNewIncludeInputDialog = layoutInflater.inflate(R.layout.add_new_include_input_dialog, null);
+            EditText newTitle = addNewIncludeInputDialog.findViewById(R.id.newTitle);
+            CheckBox defaultTitle = addNewIncludeInputDialog.findViewById(R.id.defaultTitle);
+            EditText newDescribe = addNewIncludeInputDialog.findViewById(R.id.newDescribe);
+            CheckBox defaultDescribe = addNewIncludeInputDialog.findViewById(R.id.defaultDescribe);
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setView(addNewIncludeInputDialog);
+            builder.setCancelable(false);
+            // 控制键盘回收
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+            builder.setPositiveButton("确定", (dialog, which) -> {
+                String title = newTitle.getText().toString();
+                String describe = newDescribe.getText().toString();
+                wordInclude.setTitle(title);
+                wordInclude.setDescribe(describe);
+                if (title.length() != 0 || !defaultTitle.isChecked()) {
+                    wordInclude.setDefaultTitle(false);
+                }
+                if (describe.length() != 0 || !defaultDescribe.isChecked()) {
+                    wordInclude.setDefaultDescribe(false);
+                }
+                wordInclude.refreshTitleAndDescribe();
+                holder.inCludeWordElement.getIncludeTitle().setText(wordInclude.getTitle());
+                holder.inCludeWordElement.getIncludeDescribe().setText(wordInclude.getDescribe());
+                inputMethodManager.hideSoftInputFromWindow(newTitle.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                inputMethodManager.hideSoftInputFromWindow(newDescribe.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                // 很特殊的一项
+                saveIncludeRunnable.run();
+            });
+            builder.setNegativeButton("取消", (dialog, which) -> {
+                inputMethodManager.hideSoftInputFromWindow(newTitle.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                inputMethodManager.hideSoftInputFromWindow(newDescribe.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            });
+            builder.show();
         });
     }
 
@@ -180,6 +225,7 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
             wordInclude.refreshTitleAndDescribe();
             holder.inCludeWordElement.getIncludeTitle().setText(wordInclude.getTitle());
             holder.inCludeWordElement.getIncludeDescribe().setText(wordInclude.getDescribe());
+            saveIncludeRunnable.run();
             refresh(holder);
         });
         adapter.setPlayConsumer(consumer);
@@ -188,6 +234,10 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
 
     public void setPlayConsumer(Consumer<Word> consumer) {
         this.consumer = consumer;
+    }
+
+    public void setSaveIncludeRunnable(Runnable saveIncludeRunnable) {
+        this.saveIncludeRunnable = saveIncludeRunnable;
     }
 
     class LinearViewHolder extends RecyclerView.ViewHolder {
@@ -200,7 +250,7 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
             super(itemView);
             inCludeWordElement = new IncludeWordElement();
             inCludeWordElement.setOpen(itemView.findViewById(R.id.open));
-            inCludeWordElement.setIncludeLinearLayout(itemView);
+            inCludeWordElement.setEdit(itemView.findViewById(R.id.edit));
             inCludeWordElement.setIncludeTitle(itemView.findViewById(R.id.includeTitle));
             inCludeWordElement.setIncludeDescribe(itemView.findViewById(R.id.includeDescribe));
             inCludeWordElement.setAdd(itemView.findViewById(R.id.add));

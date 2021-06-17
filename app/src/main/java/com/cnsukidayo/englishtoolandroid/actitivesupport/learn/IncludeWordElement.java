@@ -1,6 +1,5 @@
 package com.cnsukidayo.englishtoolandroid.actitivesupport.learn;
 
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,8 +14,6 @@ public class IncludeWordElement {
     private ImageButton open;
     // 是否处于展开的状态
     private boolean isOpen;
-    // 整个标题
-    private View includeLinearLayout;
     // 标题
     private TextView includeTitle;
     // 描述信息
@@ -26,6 +23,7 @@ public class IncludeWordElement {
     // 三个左滑按钮
     private LinearLayout leftSlideLinearLayout;
     //
+    private ImageButton edit;
     private ImageButton moveDown;
     private ImageButton moveUp;
     private ImageButton delete;
@@ -45,13 +43,6 @@ public class IncludeWordElement {
         this.open = open;
     }
 
-    public View getIncludeLinearLayout() {
-        return includeLinearLayout;
-    }
-
-    public void setIncludeLinearLayout(View includeLinearLayout) {
-        this.includeLinearLayout = includeLinearLayout;
-    }
 
     public TextView getIncludeTitle() {
         return includeTitle;
@@ -131,5 +122,13 @@ public class IncludeWordElement {
 
     public void setOpen(boolean open) {
         isOpen = open;
+    }
+
+    public ImageButton getEdit() {
+        return edit;
+    }
+
+    public void setEdit(ImageButton edit) {
+        this.edit = edit;
     }
 }

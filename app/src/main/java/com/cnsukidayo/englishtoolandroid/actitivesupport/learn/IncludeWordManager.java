@@ -10,7 +10,7 @@ public class IncludeWordManager implements Serializable {
     // 这个List必须得按照order的顺序排放
     private List<WordInclude> allWordInclude;
     // 即将被添加到某个分类的单词,这也存放在IncludeWordManager中,因为只有一个单词会被添加,这对用户是不可见的.
-    private Word toAddWord;
+    private transient Word toAddWord;
 
     public IncludeWordManager() {
     }

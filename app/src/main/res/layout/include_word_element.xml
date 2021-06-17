@@ -65,6 +65,15 @@
             android:layout_height="wrap_content">
 
             <ImageButton
+                android:id="@+id/edit"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/edit" />
+
+            <ImageButton
                 android:id="@+id/moveUp"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="40dp"

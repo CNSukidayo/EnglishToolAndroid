@@ -32,23 +32,28 @@ public class IncludeWordPopWindowHandler {
     // 分类管理器
     private IncludeWordManager includeWordManager;
     private Consumer<Word> consumer;
+    private Runnable saveIncludeRunnable;
+    private volatile boolean isFirst = false;
+
     public IncludeWordPopWindowHandler(Context context, RelativeLayout includeWordPopLayout, IncludeWordManager includeWordManager) {
         this.includeWordPopLayout = includeWordPopLayout;
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.includeWordManager = includeWordManager;
-        init();
-        event();
     }
 
-    private void init() {
-        induceWordWrapRecyclerView = includeWordPopLayout.findViewById(R.id.induceWordWrapRecyclerView);
-        addNewGroup = includeWordPopLayout.findViewById(R.id.addNewGroup);
-        induceWordWrapRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        // 不停的变动
-        // 添加一个白块用于消除上下差别
-        induceWordWrapRecyclerView.addFooterView(layoutInflater.inflate(R.layout.place_holder_view, null));
-        updateInduceWordWrapRecyclerView();
+    public void init() {
+        if (!isFirst) {
+            induceWordWrapRecyclerView = includeWordPopLayout.findViewById(R.id.induceWordWrapRecyclerView);
+            addNewGroup = includeWordPopLayout.findViewById(R.id.addNewGroup);
+            induceWordWrapRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            // 不停的变动
+            // 添加一个白块用于消除上下差别
+            induceWordWrapRecyclerView.addFooterView(layoutInflater.inflate(R.layout.place_holder_view, null));
+            updateInduceWordWrapRecyclerView();
+            event();
+        }
+        isFirst = true;
     }
 
     private void event() {
@@ -93,10 +98,16 @@ public class IncludeWordPopWindowHandler {
     private void updateInduceWordWrapRecyclerView() {
         IncludePopRecyclerViewAdapter adapter = new IncludePopRecyclerViewAdapter(context, includeWordManager, this::updateInduceWordWrapRecyclerView);
         adapter.setPlayConsumer(consumer);
+        adapter.setSaveIncludeRunnable(saveIncludeRunnable);
+        saveIncludeRunnable.run();
         induceWordWrapRecyclerView.setAdapter(adapter);
     }
 
     public void setPlayConsumer(Consumer<Word> consumer) {
         this.consumer = consumer;
+    }
+
+    public void setSaveIncludeRunnable(Runnable saveIncludeRunnable) {
+        this.saveIncludeRunnable = saveIncludeRunnable;
     }
 }

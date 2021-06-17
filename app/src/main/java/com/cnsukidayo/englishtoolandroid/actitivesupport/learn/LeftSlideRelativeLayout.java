@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.function.Consumer;
@@ -56,5 +57,10 @@ public class LeftSlideRelativeLayout extends RelativeLayout {
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        super.setOnClickListener(l);
     }
 }

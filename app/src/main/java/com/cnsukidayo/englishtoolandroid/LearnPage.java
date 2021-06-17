@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -44,7 +45,9 @@ import com.cnsukidayo.englishtoolandroid.core.enums.WordMarkColor;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -132,6 +135,10 @@ public class LearnPage extends AppCompatActivity {
     private IncludeWordPopWindowHandler includeWordPopWindowHandler;
     // 分类管理器
     private IncludeWordManager includeWordManager;
+    // 退出
+    private boolean isExit;
+    // 序列化和反序列化工具
+    private Gson gson = new Gson();
 
     @SuppressLint("ShowToast")
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -191,8 +198,18 @@ public class LearnPage extends AppCompatActivity {
         // 交给处理器去处理
         includeWordPopWindowHandler = new IncludeWordPopWindowHandler(this, includeWordPopLayout, includeWordManager);
         includeWordPopWindowHandler.setPlayConsumer(this::playMedia);
+        includeWordPopWindowHandler.setSaveIncludeRunnable(() -> {
+            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
+            try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
+                String result = gson.toJson(includeWordManager);
+                writer.write(result.getBytes(StandardCharsets.UTF_8));
+                writer.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         induceWordPopWindow = new PopupWindow(includeWordPopLayout);
-
+        // 返回
         backButton.setOnClickListener(v -> {
             if (topBarHorizontalScrollView.getVisibility() == View.INVISIBLE) {
                 topBarHorizontalScrollView.setVisibility(View.VISIBLE);
@@ -213,9 +230,7 @@ public class LearnPage extends AppCompatActivity {
             }
         });
         // 混沌模式
-        chaosWord.setOnClickListener(v ->
-
-        {
+        chaosWord.setOnClickListener(v -> {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.chaos_mode_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, chaosWord.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             ChaosWordPopWindow markWordPopWindow = new ChaosWordPopWindow(changeMusicModPop, changeModPopWindow, chaosWord, new Consumer<WordMarkColor>() {
@@ -252,9 +267,7 @@ public class LearnPage extends AppCompatActivity {
             changeModPopWindow.setFocusable(true);
             changeModPopWindow.showAsDropDown(chaosWord);
         });
-        rangeRandom.setOnClickListener(v ->
-
-        {
+        rangeRandom.setOnClickListener(v -> {
             rangeWordFlag = !rangeWordFlag;
             if (rangeWordFlag) {
                 // 得到玩家输入的View
@@ -311,9 +324,7 @@ public class LearnPage extends AppCompatActivity {
 
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
         // 检查结果按钮事件
-        checkAnswersButton.setOnClickListener(v ->
-
-        {
+        checkAnswersButton.setOnClickListener(v -> {
             String answerText = allWorlds.get(current).getEnglish();
             // 设置英文
             englishAnswerTextView.setText(answerText);
@@ -336,9 +347,7 @@ public class LearnPage extends AppCompatActivity {
         });
 
         // 点击跳转的按钮
-        progressTextView.setOnClickListener(v ->
-
-        {
+        progressTextView.setOnClickListener(v -> {
             final EditText editText = new EditText(LearnPage.this);
             AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
             builder.setTitle("跳转到:");
@@ -371,20 +380,12 @@ public class LearnPage extends AppCompatActivity {
         // 清除输入框按钮
         clearEnglishInput.setOnClickListener(v -> input.setText(""));
 
-        preButton.setOnClickListener(
-
-                getPlayClickListener());
-        nextButton.setOnClickListener(
-
-                getPlayClickListener());
-        playButton.setOnClickListener(
-
-                getPlayClickListener());
+        preButton.setOnClickListener(getPlayClickListener());
+        nextButton.setOnClickListener(getPlayClickListener());
+        playButton.setOnClickListener(getPlayClickListener());
 
         // 更改当前模式
-        changeMod.setOnClickListener(v ->
-
-        {
+        changeMod.setOnClickListener(v -> {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.change_mod_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, changeMod.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             ChangePlayModePopWindow markWordPopWindow = new ChangePlayModePopWindow(changeMusicModPop, changeModPopWindow,
@@ -396,16 +397,12 @@ public class LearnPage extends AppCompatActivity {
         });
 
         // 解除标记
-        markThisButton.setOnLongClickListener(v ->
-
-        {
+        markThisButton.setOnLongClickListener(v -> {
             markWordButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.DEFAULT);
             return true;
         });
         // 标记单词
-        markThisButton.setOnClickListener(v ->
-
-        {
+        markThisButton.setOnClickListener(v -> {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_word_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, markThisButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             MarkWordPopWindow markWordPopWindow = new MarkWordPopWindow(changeMusicModPop, changeModPopWindow, allWorlds.get(current), markWordButtonBackGroundChangeHandler);
@@ -414,16 +411,12 @@ public class LearnPage extends AppCompatActivity {
             changeModPopWindow.showAsDropDown(markThisButton);
         });
         // 解除标记模式
-        startMarkModeButton.setOnLongClickListener(v ->
-
-        {
+        startMarkModeButton.setOnLongClickListener(v -> {
             markModeButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.DEFAULT);
             return true;
         });
         // 开启标记模式
-        startMarkModeButton.setOnClickListener(v ->
-
-        {
+        startMarkModeButton.setOnClickListener(v -> {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_mode_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, startMarkModeButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             MarkModePopWindow markWordPopWindow = new MarkModePopWindow(changeMusicModPop, changeModPopWindow, wordMarkColor -> nowMarkMode = wordMarkColor, markModeButtonBackGroundChangeHandler);
@@ -432,12 +425,9 @@ public class LearnPage extends AppCompatActivity {
             changeModPopWindow.showAsDropDown(startMarkModeButton);
         });
         // 保存现场
-        saveScene.setOnClickListener(v ->
-
-        {
+        saveScene.setOnClickListener(v -> {
             String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
             try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
-                Gson gson = new Gson();
                 String result = gson.toJson(allWorlds);
                 writer.write(result.getBytes(StandardCharsets.UTF_8));
                 writer.flush();
@@ -445,17 +435,15 @@ public class LearnPage extends AppCompatActivity {
                 ioException.printStackTrace();
             }
         });
-        englishAnswerTextView.setOnClickListener(v ->
-
-        {
+        englishAnswerTextView.setOnClickListener(v -> {
             Word word = allWorlds.get(current);
             Toast toast = Toast.makeText(getApplicationContext(), "第" + word.getDays() + "天", Toast.LENGTH_SHORT);
             toast.show();
         });
         // 单词归纳功能
-        induceWord.setOnClickListener(v ->
-
-        {
+        induceWord.setOnClickListener(v -> {
+            // 现在采用延迟加载
+            includeWordPopWindowHandler.init();
             includeWordManager.setToAddWordWordTag(allWorlds.get(current));
             topBarHorizontalScrollView.setVisibility(View.INVISIBLE);
             induceWordPopWindow.setWidth(topBar.getWidth());
@@ -464,13 +452,32 @@ public class LearnPage extends AppCompatActivity {
         });
     }
 
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && topBarHorizontalScrollView.getVisibility() == View.INVISIBLE) {
+            topBarHorizontalScrollView.setVisibility(View.VISIBLE);
+            induceWordPopWindow.dismiss();
+            isExit = false;
+            return true;
+        } else {
+            Intent intent = new Intent();
+            setResult(MainActivity.RESULT_OK, intent);
+            finish();
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
     private IncludeWordManager getIncludeWordManager() {
         String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
         File includeFile = new File(absolutePath);
-        IncludeWordManager result;
-//        if (includeFile.exists()) {
-//            return result;
-//        }
+        IncludeWordManager result = null;
+        if (includeFile.exists()) {
+            try {
+                result = gson.fromJson(new FileReader(includeFile), IncludeWordManager.class);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
         result = new IncludeWordManager();
         result.setAllWordInclude(new ArrayList<>());
         return result;
