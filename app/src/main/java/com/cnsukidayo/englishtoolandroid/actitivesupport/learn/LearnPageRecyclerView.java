@@ -83,7 +83,7 @@ public class LearnPageRecyclerView extends RecyclerView.Adapter<LearnPageRecycle
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void setAnswerLabelTextFromWord(Word word) {
         for (ChineseInput chineseInput : this.allChineseInput) {
-            chineseInput.getChineseAnswerTextView().setText(word == null ? "" : word.getAllChineseMap().getOrDefault(chineseInput.getPartOfSpeech().name(), ""));
+            chineseInput.getChineseAnswerTextView().setText(word == null ? "" : word.getAllChineseMap().getOrDefault(chineseInput.getPartOfSpeech(), ""));
         }
     }
 

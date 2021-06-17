@@ -64,6 +64,12 @@
                     android:layout_height="wrap_content"
                     android:text="区域随机" />
 
+                <Button
+                    android:id="@+id/induceWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="单词归纳" />
+
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>

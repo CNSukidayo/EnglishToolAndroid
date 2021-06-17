@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.ChangePlayModePopWindow;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.ChaosWordPopWindow;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.IncludeWordManager;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.IncludeWordPopWindowHandler;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LearnPageRecyclerView;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModeButtonBackGroundChangeHandler;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModePopWindow;
@@ -79,6 +83,12 @@ public class LearnPage extends AppCompatActivity {
     private boolean isFirstCheckAnswer;
     // 区域随机
     private Button rangeRandom;
+    // 单词归纳
+    private Button induceWord;
+    // 整体的Toolbar,主要就是用来显示那个PopWindow用的,这个PopWindow应该常驻内存,否则每次创建太浪费资源
+    private LinearLayout topBar;
+    // 显示功能的Toolbar
+    private HorizontalScrollView topBarHorizontalScrollView;
     // 结果回显TextView
     private TextView englishAnswerTextView;
     // 显示正确或错误的结果TextView
@@ -115,6 +125,13 @@ public class LearnPage extends AppCompatActivity {
     private WordMarkColor nowMarkMode = WordMarkColor.DEFAULT;
     // 用单词颜色作为当前混沌模式的标记,默认是不开启的
     private WordMarkColor nowChaosMode = WordMarkColor.DEFAULT;
+    // 单词归纳PopWindow,常驻内存
+    private PopupWindow induceWordPopWindow;
+    private RelativeLayout includeWordPopLayout;
+    // 处理分类单词的处理器
+    private IncludeWordPopWindowHandler includeWordPopWindowHandler;
+    // 分类管理器
+    private IncludeWordManager includeWordManager;
 
     @SuppressLint("ShowToast")
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -161,24 +178,44 @@ public class LearnPage extends AppCompatActivity {
         saveScene = findViewById(R.id.saveScene);
         chaosWord = findViewById(R.id.chaosWord);
         changeMod = findViewById(R.id.changeMod);
+        induceWord = findViewById(R.id.induceWord);
+        topBar = findViewById(R.id.topBar);
+
+        topBarHorizontalScrollView = findViewById(R.id.topBarHorizontalScrollView);
         markWordButtonBackGroundChangeHandler = new MarkWordButtonBackGroundChangeHandler(markThisButton);
         markModeButtonBackGroundChangeHandler = new MarkModeButtonBackGroundChangeHandler(startMarkModeButton);
-        backButton.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
-            builder.setMessage("确认返回主页?");
-            builder.setCancelable(false);
-            builder.setPositiveButton("确定", (dialog, which) -> {
-                Intent intent = new Intent();
-                setResult(MainActivity.RESULT_OK, intent);
-                finish();
-            });
-            builder.setNegativeButton("取消", (dialog, which) -> {
+        // 初始化单词归类
+        includeWordPopLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.include_word_pop, null);
+        // 通过Json反序列化获取
+        includeWordManager = getIncludeWordManager();
+        // 交给处理器去处理
+        includeWordPopWindowHandler = new IncludeWordPopWindowHandler(this, includeWordPopLayout, includeWordManager);
+        includeWordPopWindowHandler.setPlayConsumer(this::playMedia);
+        induceWordPopWindow = new PopupWindow(includeWordPopLayout);
 
-            });
-            builder.show();
+        backButton.setOnClickListener(v -> {
+            if (topBarHorizontalScrollView.getVisibility() == View.INVISIBLE) {
+                topBarHorizontalScrollView.setVisibility(View.VISIBLE);
+                induceWordPopWindow.dismiss();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
+                builder.setMessage("确认返回主页?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("确定", (dialog, which) -> {
+                    Intent intent = new Intent();
+                    setResult(MainActivity.RESULT_OK, intent);
+                    finish();
+                });
+                builder.setNegativeButton("取消", (dialog, which) -> {
+
+                });
+                builder.show();
+            }
         });
         // 混沌模式
-        chaosWord.setOnClickListener(v -> {
+        chaosWord.setOnClickListener(v ->
+
+        {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.chaos_mode_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, chaosWord.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             ChaosWordPopWindow markWordPopWindow = new ChaosWordPopWindow(changeMusicModPop, changeModPopWindow, chaosWord, new Consumer<WordMarkColor>() {
@@ -215,7 +252,9 @@ public class LearnPage extends AppCompatActivity {
             changeModPopWindow.setFocusable(true);
             changeModPopWindow.showAsDropDown(chaosWord);
         });
-        rangeRandom.setOnClickListener(v -> {
+        rangeRandom.setOnClickListener(v ->
+
+        {
             rangeWordFlag = !rangeWordFlag;
             if (rangeWordFlag) {
                 // 得到玩家输入的View
@@ -272,7 +311,9 @@ public class LearnPage extends AppCompatActivity {
 
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
         // 检查结果按钮事件
-        checkAnswersButton.setOnClickListener(v -> {
+        checkAnswersButton.setOnClickListener(v ->
+
+        {
             String answerText = allWorlds.get(current).getEnglish();
             // 设置英文
             englishAnswerTextView.setText(answerText);
@@ -289,13 +330,15 @@ public class LearnPage extends AppCompatActivity {
                 learnPageRecyclerView.setAnswerLabelTextFromWord(allWorlds.get(current));
             }
             if (startMod == StartMod.ENGLISHCHINESETRANSLATE) {
-                asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(baseFile.getAbsolutePath()), false, audioAttributes);
+                playMedia(allWorlds.get(current));
             }
             isFirstCheckAnswer = true;
         });
 
         // 点击跳转的按钮
-        progressTextView.setOnClickListener(v -> {
+        progressTextView.setOnClickListener(v ->
+
+        {
             final EditText editText = new EditText(LearnPage.this);
             AlertDialog.Builder builder = new AlertDialog.Builder(LearnPage.this);
             builder.setTitle("跳转到:");
@@ -328,12 +371,20 @@ public class LearnPage extends AppCompatActivity {
         // 清除输入框按钮
         clearEnglishInput.setOnClickListener(v -> input.setText(""));
 
-        preButton.setOnClickListener(getPlayClickListener());
-        nextButton.setOnClickListener(getPlayClickListener());
-        playButton.setOnClickListener(getPlayClickListener());
+        preButton.setOnClickListener(
+
+                getPlayClickListener());
+        nextButton.setOnClickListener(
+
+                getPlayClickListener());
+        playButton.setOnClickListener(
+
+                getPlayClickListener());
 
         // 更改当前模式
-        changeMod.setOnClickListener(v -> {
+        changeMod.setOnClickListener(v ->
+
+        {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.change_mod_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, changeMod.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             ChangePlayModePopWindow markWordPopWindow = new ChangePlayModePopWindow(changeMusicModPop, changeModPopWindow,
@@ -345,12 +396,16 @@ public class LearnPage extends AppCompatActivity {
         });
 
         // 解除标记
-        markThisButton.setOnLongClickListener(v -> {
+        markThisButton.setOnLongClickListener(v ->
+
+        {
             markWordButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.DEFAULT);
             return true;
         });
         // 标记单词
-        markThisButton.setOnClickListener(v -> {
+        markThisButton.setOnClickListener(v ->
+
+        {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_word_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, markThisButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             MarkWordPopWindow markWordPopWindow = new MarkWordPopWindow(changeMusicModPop, changeModPopWindow, allWorlds.get(current), markWordButtonBackGroundChangeHandler);
@@ -359,12 +414,16 @@ public class LearnPage extends AppCompatActivity {
             changeModPopWindow.showAsDropDown(markThisButton);
         });
         // 解除标记模式
-        startMarkModeButton.setOnLongClickListener(v -> {
+        startMarkModeButton.setOnLongClickListener(v ->
+
+        {
             markModeButtonBackGroundChangeHandler.changeButtonBackGround(WordMarkColor.DEFAULT);
             return true;
         });
         // 开启标记模式
-        startMarkModeButton.setOnClickListener(v -> {
+        startMarkModeButton.setOnClickListener(v ->
+
+        {
             LinearLayout changeMusicModPop = (LinearLayout) getLayoutInflater().inflate(R.layout.mark_mode_color_pop, null);
             PopupWindow changeModPopWindow = new PopupWindow(changeMusicModPop, startMarkModeButton.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             MarkModePopWindow markWordPopWindow = new MarkModePopWindow(changeMusicModPop, changeModPopWindow, wordMarkColor -> nowMarkMode = wordMarkColor, markModeButtonBackGroundChangeHandler);
@@ -373,7 +432,9 @@ public class LearnPage extends AppCompatActivity {
             changeModPopWindow.showAsDropDown(startMarkModeButton);
         });
         // 保存现场
-        saveScene.setOnClickListener(v -> {
+        saveScene.setOnClickListener(v ->
+
+        {
             String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
             try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
                 Gson gson = new Gson();
@@ -384,11 +445,39 @@ public class LearnPage extends AppCompatActivity {
                 ioException.printStackTrace();
             }
         });
-        englishAnswerTextView.setOnClickListener(v -> {
+        englishAnswerTextView.setOnClickListener(v ->
+
+        {
             Word word = allWorlds.get(current);
             Toast toast = Toast.makeText(getApplicationContext(), "第" + word.getDays() + "天", Toast.LENGTH_SHORT);
             toast.show();
         });
+        // 单词归纳功能
+        induceWord.setOnClickListener(v ->
+
+        {
+            includeWordManager.setToAddWordWordTag(allWorlds.get(current));
+            topBarHorizontalScrollView.setVisibility(View.INVISIBLE);
+            induceWordPopWindow.setWidth(topBar.getWidth());
+            induceWordPopWindow.setHeight(getWindowManager().getDefaultDisplay().getHeight() - topBar.getHeight());
+            induceWordPopWindow.showAsDropDown(topBar);
+        });
+    }
+
+    private IncludeWordManager getIncludeWordManager() {
+        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
+        File includeFile = new File(absolutePath);
+        IncludeWordManager result;
+//        if (includeFile.exists()) {
+//            return result;
+//        }
+        result = new IncludeWordManager();
+        result.setAllWordInclude(new ArrayList<>());
+        return result;
+    }
+
+    private void playMedia(Word word) {
+        asyncPlayer.play(getApplicationContext(), word.getAudioUri(baseFile.getAbsolutePath()), false, audioAttributes);
     }
 
     private View.OnClickListener playClickListener = null;
@@ -433,7 +522,7 @@ public class LearnPage extends AppCompatActivity {
                 }
                 // 不管怎样最终都要播放音效
                 if (startMod != StartMod.ENGLISHCHINESETRANSLATE) {
-                    asyncPlayer.play(getApplicationContext(), allWorlds.get(current).getAudioUri(baseFile.getAbsolutePath()), false, audioAttributes);
+                    playMedia(allWorlds.get(current));
                 }
                 // 加载新位置的单词
                 learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(allWorlds.get(current).getEnglish()));

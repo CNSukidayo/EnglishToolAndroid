@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LeftSlideRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/open"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:rotation="-90"
+        android:scaleType="fitXY"
+        android:src="@drawable/open" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/open"
+        android:layout_toStartOf="@+id/buttonGroup"
+        android:layout_toEndOf="@+id/open">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/includeTitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.6"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="233"
+                android:textColor="@color/colorBlack"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/includeDescribe"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.4"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:singleLine="true"
+                android:text="233"
+                android:textColor="@color/colorGray" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true">
+
+        <LinearLayout
+            android:id="@+id/leftSlide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/moveUp"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/moveup" />
+
+            <ImageButton
+                android:id="@+id/moveDown"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:rotation="180"
+                android:scaleType="fitCenter"
+                android:src="@drawable/movedown" />
+
+            <ImageButton
+                android:id="@+id/delete"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:rotation="180"
+                android:scaleType="fitCenter"
+                android:src="@drawable/delete" />
+        </LinearLayout>
+
+
+        <ImageButton
+            android:id="@+id/add"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/add" />
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/colorNotChooseJsonCheckBoxBlue" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/open">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/controlWordWrapRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </RelativeLayout>
+
+</com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LeftSlideRelativeLayout>
