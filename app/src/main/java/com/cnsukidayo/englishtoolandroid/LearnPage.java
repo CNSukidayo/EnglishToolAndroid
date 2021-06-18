@@ -135,8 +135,6 @@ public class LearnPage extends AppCompatActivity {
     private IncludeWordPopWindowHandler includeWordPopWindowHandler;
     // 分类管理器
     private IncludeWordManager includeWordManager;
-    // 退出
-    private boolean isExit;
     // 序列化和反序列化工具
     private Gson gson = new Gson();
 
@@ -456,9 +454,8 @@ public class LearnPage extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK && topBarHorizontalScrollView.getVisibility() == View.INVISIBLE) {
             topBarHorizontalScrollView.setVisibility(View.VISIBLE);
             induceWordPopWindow.dismiss();
-            isExit = false;
             return true;
-        } else {
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             Intent intent = new Intent();
             setResult(MainActivity.RESULT_OK, intent);
             finish();

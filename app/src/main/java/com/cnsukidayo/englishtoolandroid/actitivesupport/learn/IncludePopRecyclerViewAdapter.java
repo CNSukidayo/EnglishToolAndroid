@@ -74,8 +74,6 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
         // 保留当前是否正在展开,显示到刷新之后
         if (holder.inCludeWordElement.isOpen()) {
             open(holder);
-        } else {
-            fold(holder);
         }
         // (添加事件)将单词添加到当前分类
         holder.inCludeWordElement.getAdd().setOnClickListener(v -> {
@@ -227,7 +225,7 @@ public class IncludePopRecyclerViewAdapter extends RecyclerView.Adapter<IncludeP
             holder.inCludeWordElement.getIncludeDescribe().setText(wordInclude.getDescribe());
             saveIncludeRunnable.run();
             refresh(holder);
-        });
+        },includeWordManager);
         adapter.setPlayConsumer(consumer);
         holder.inCludeWordElement.getControlWordWrapRecyclerView().setAdapter(adapter);
     }

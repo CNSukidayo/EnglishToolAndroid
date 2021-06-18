@@ -17,12 +17,12 @@
 
         <ImageButton
             android:id="@+id/back"
-            android:src="@drawable/back"
-            android:scaleType="fitCenter"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="35dp"
             android:layout_height="45dp"
-            android:background="@drawable/back_fillet" />
+            android:background="@drawable/back_fillet"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back" />
 
         <HorizontalScrollView
             android:id="@+id/topBarHorizontalScrollView"
@@ -41,6 +41,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="保存现场" />
+
+                <Button
+                    android:id="@+id/induceWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="单词归纳" />
 
                 <Button
                     android:id="@+id/chaosWord"
@@ -63,12 +69,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="区域随机" />
-
-                <Button
-                    android:id="@+id/induceWord"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="单词归纳" />
 
             </LinearLayout>
         </HorizontalScrollView>

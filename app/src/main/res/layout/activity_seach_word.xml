@@ -8,18 +8,31 @@
     android:orientation="vertical"
     tools:context=".LearnPage">
 
-    <ImageButton
-        android:id="@+id/back"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="40dp"
-        android:layout_height="45dp"
-        android:background="@drawable/back_fillet"
-        android:gravity="center"
-        android:scaleType="fitCenter"
-        android:src="@drawable/back"
-        android:textColor="@color/colorBlack"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="45dp"
+            android:background="@drawable/back_fillet"
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/induceWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="单词归纳" />
+    </LinearLayout>
 
     <TableLayout
         android:layout_width="match_parent"
@@ -108,8 +121,8 @@
                 android:id="@+id/day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="占位符"
                 android:layout_gravity="center"
+                android:text="占位符"
                 android:textColor="@color/colorBlack"
                 android:textSize="26sp" />
 

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -24,16 +25,19 @@ public class ControlWordRecyclerViewAdapter extends RecyclerView.Adapter<Control
     private final Runnable refreshList;
     private Context context;
     private Consumer<Word> consumer;
+    private IncludeWordManager includeWordManager;
+
     /**
      * @param context     上下文
      * @param wordInclude 单词管理器
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public ControlWordRecyclerViewAdapter(Context context, WordInclude wordInclude, Runnable refreshList) {
+    public ControlWordRecyclerViewAdapter(Context context, WordInclude wordInclude, Runnable refreshList, IncludeWordManager includeWordManager) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.wordInclude = wordInclude;
         this.refreshList = refreshList;
+        this.includeWordManager = includeWordManager;
     }
 
     @NonNull
@@ -69,6 +73,11 @@ public class ControlWordRecyclerViewAdapter extends RecyclerView.Adapter<Control
         holder.includeWordControlElement.getRecyclerView().setLayoutManager(new LinearLayoutManager(context));
         holder.includeWordControlElement.getRecyclerView().setAdapter(new IncludeWordMessageRecyclerViewAdapter(context, word));
         holder.includeWordControlElement.getEnglishOriginal().setOnClickListener(v -> consumer.accept(word));
+        holder.includeWordControlElement.getEnglishOriginal().setOnLongClickListener(v -> {
+            includeWordManager.setToAddWordWordTag(word);
+            Toast.makeText(context, word.getEnglish() + "现在可以被添加", Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
 

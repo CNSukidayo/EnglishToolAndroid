@@ -3,33 +3,48 @@ package com.cnsukidayo.englishtoolandroid;
 import android.annotation.SuppressLint;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
-import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.IncludeWordManager;
+import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.IncludeWordPopWindowHandler;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.LearnPageRecyclerView;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.searchword.SearchPoPRecyclerViewAdapter;
+import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
+import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +67,10 @@ public class SearchWord extends AppCompatActivity {
             .setUsage(AudioAttributes.USAGE_MEDIA)
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .build();
+    // 返回
+    private ImageButton back;
+    //
+    private LinearLayout topBar;
     // 结果回显TextView
     private TextView englishAnswerTextView;
     // 播放
@@ -65,6 +84,32 @@ public class SearchWord extends AppCompatActivity {
     private Word prePlayWord;
     // 第几天
     private TextView day;
+    //
+    Gson gson = new Gson();
+    // 单词归纳
+    private Button induceWord;
+    // 单词归纳PopWindow,常驻内存
+    private PopupWindow induceWordPopWindow;
+    private RelativeLayout includeWordPopLayout;
+    // 处理分类单词的处理器
+    private IncludeWordPopWindowHandler includeWordPopWindowHandler;
+    // 分类管理器
+    private IncludeWordManager includeWordManager;
+    // 键盘回收
+    private InputMethodManager inputMethodManager;
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && induceWord.getVisibility() == View.INVISIBLE) {
+            induceWord.setVisibility(View.VISIBLE);
+            induceWordPopWindow.dismiss();
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent();
+            setResult(MainActivity.RESULT_OK, intent);
+            finish();
+        }
+        return super.onKeyUp(keyCode, event);
+    }
 
     @SuppressLint("ShowToast")
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -74,10 +119,13 @@ public class SearchWord extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_seach_word);
         baseFilePath = Objects.requireNonNull(getIntent().getExtras()).getString("baseFilePath");
+        back = findViewById(R.id.back);
         input = findViewById(R.id.input);
         englishAnswerTextView = findViewById(R.id.result);
         playButton = findViewById(R.id.playButton);
         stopButton = findViewById(R.id.stopButton);
+        induceWord = findViewById(R.id.induceWord);
+        topBar = findViewById(R.id.topBar);
         clearEnglishInput = findViewById(R.id.clearEnglishInput);
         day = findViewById(R.id.day);
         RecyclerView chineseInputRecyclerView = findViewById(R.id.chineseInputRecyclerView);
@@ -98,7 +146,7 @@ public class SearchWord extends AppCompatActivity {
         setInputChangeEvent();
         playButton.setOnClickListener(v -> {
             if (prePlayWord != null) {
-                asyncPlayer.play(getApplicationContext(), prePlayWord.getAudioUri(baseFilePath), false, audioAttributes);
+                playMedia(prePlayWord);
             }
         });
         stopButton.setOnClickListener(v -> asyncPlayer.stop());
@@ -109,6 +157,71 @@ public class SearchWord extends AppCompatActivity {
             Toast.makeText(this, "以复制到剪切板", Toast.LENGTH_SHORT);
             return true;
         });
+        // 返回功能
+        back.setOnClickListener(v -> {
+            if (induceWord.getVisibility() == View.INVISIBLE) {
+                induceWord.setVisibility(View.VISIBLE);
+                induceWordPopWindow.dismiss();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SearchWord.this);
+                builder.setMessage("确认返回主页?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("确定", (dialog, which) -> {
+                    Intent intent = new Intent();
+                    setResult(MainActivity.RESULT_OK, intent);
+                    finish();
+                });
+                builder.setNegativeButton("取消", (dialog, which) -> {
+
+                });
+                builder.show();
+            }
+        });
+        // 初始化单词归类
+        includeWordPopLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.include_word_pop, null);
+        // 通过Json反序列化获取
+        includeWordManager = getIncludeWordManager();
+        // 单词分类功能
+        includeWordPopWindowHandler = new IncludeWordPopWindowHandler(this, includeWordPopLayout, includeWordManager);
+        includeWordPopWindowHandler.setPlayConsumer(this::playMedia);
+        includeWordPopWindowHandler.setSaveIncludeRunnable(() -> {
+            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
+            try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
+                String result = gson.toJson(includeWordManager);
+                writer.write(result.getBytes(StandardCharsets.UTF_8));
+                writer.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+        induceWordPopWindow = new PopupWindow(includeWordPopLayout);
+        induceWord.setOnClickListener(v -> {
+            inputMethodManager = (InputMethodManager) this.getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            includeWordPopWindowHandler.init();
+            includeWordManager.setToAddWordWordTag(prePlayWord);
+            induceWord.setVisibility(View.INVISIBLE);
+            induceWordPopWindow.setWidth(topBar.getWidth());
+            induceWordPopWindow.setHeight(getWindowManager().getDefaultDisplay().getHeight() - topBar.getHeight());
+            induceWordPopWindow.showAsDropDown(topBar);
+        });
+    }
+
+    private IncludeWordManager getIncludeWordManager() {
+        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
+        File includeFile = new File(absolutePath);
+        IncludeWordManager result = null;
+        if (includeFile.exists()) {
+            try {
+                result = gson.fromJson(new FileReader(includeFile), IncludeWordManager.class);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+        result = new IncludeWordManager();
+        result.setAllWordInclude(new ArrayList<>());
+        return result;
     }
 
     // 无动画
@@ -232,7 +345,7 @@ public class SearchWord extends AppCompatActivity {
                     prePlayWord = word;
                     destroyPoPWindow();
                     learnPageRecyclerView.setAnswerLabelTextFromWord(word);
-                    asyncPlayer.play(getApplicationContext(), word.getAudioUri(baseFilePath), false, audioAttributes);
+                    playMedia(word);
                     englishAnswerTextView.setText(word.getEnglish());
                 });
         // 如果不是暴风搜索就添加展开的按钮,让用户可以展开搜搜
@@ -256,6 +369,10 @@ public class SearchWord extends AppCompatActivity {
         searchPopupWindow.showAsDropDown(input);
         enableAnimation = false;
 
+    }
+
+    private void playMedia(Word word) {
+        asyncPlayer.play(getApplicationContext(), word.getAudioUri(baseFilePath), false, audioAttributes);
     }
 
     // 销毁弹出的PopWindow

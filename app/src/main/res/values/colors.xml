@@ -17,6 +17,7 @@
     <color name="colorTrueColor">#336DFF</color>
     <color name="colorFalseColor">#FF0000</color>
     <color name="colorLightBlue">#0051FF</color>
+    <color name="colorOrange">#FF9F28</color>
     <color name="colorLightOrange">#FFD700</color>
     <color name="colorDarkBlue">#48CBDB</color>
     <color name="colorDottedLine">#FF78FA</color>
