@@ -22,6 +22,8 @@ public class IncludeWordMessageRecyclerViewAdapter extends RecyclerView.Adapter<
     private final LayoutInflater layoutInflater;
     private final Word word;
     private final List<PartOfSpeechEnum> partOfSpeechEnums = new ArrayList<>(3);
+    // 是否要添加介词短语(因为介词短语是特殊的)
+    private int i = 0;
 
     /**
      * @param context 上下文
@@ -31,6 +33,9 @@ public class IncludeWordMessageRecyclerViewAdapter extends RecyclerView.Adapter<
     public IncludeWordMessageRecyclerViewAdapter(Context context, Word word) {
         this.layoutInflater = LayoutInflater.from(context);
         this.word = word;
+        if (word.getPREPPhrase() != null && !word.getPREPPhrase().isEmpty()) {
+            i = 1;
+        }
     }
 
     @NonNull
@@ -42,12 +47,15 @@ public class IncludeWordMessageRecyclerViewAdapter extends RecyclerView.Adapter<
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onBindViewHolder(@NonNull LinearViewHolder holder, int position) {
+        if (partOfSpeechEnums.size() == position) {
+            holder.includeWordMessageElement.getPartOfSpeech().setText("介词短语&固定搭配:");
+            holder.includeWordMessageElement.getChinese().setSingleLine(false);
+            holder.includeWordMessageElement.getChinese().setText(word.getPREPPhrase());
+            return;
+        }
         PartOfSpeechEnum partOfSpeechEnum = partOfSpeechEnums.get(position);
         holder.includeWordMessageElement.getPartOfSpeech().setText(partOfSpeechEnum.getName() + ".");
         holder.includeWordMessageElement.getChinese().setText(word.getAllChineseMap().get(partOfSpeechEnum));
-        if (partOfSpeechEnum == PartOfSpeechEnum.PHTASESANDCOLLOCATION) {
-            holder.includeWordMessageElement.getChinese().setSingleLine(false);
-        }
     }
 
     @Override
@@ -58,7 +66,7 @@ public class IncludeWordMessageRecyclerViewAdapter extends RecyclerView.Adapter<
                 partOfSpeechEnums.add(partOfSpeechEnum);
             }
         }
-        return partOfSpeechEnums.size();
+        return partOfSpeechEnums.size() + i;
     }
 
     @Override

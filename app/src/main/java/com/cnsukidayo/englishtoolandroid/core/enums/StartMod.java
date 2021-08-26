@@ -31,6 +31,14 @@ public enum StartMod {
             textView.setText("");
             learnPageRecyclerView.setAnswerLabelTextFromWord(trueWord);
         }
+    },
+    ONLYRECITE {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void englishAnswerValueHandle(Word trueWord, TextView textView, LearnPageRecyclerView learnPageRecyclerView) {
+            textView.setText(trueWord.getEnglish());
+            learnPageRecyclerView.setAnswerLabelTextFromWord(trueWord);
+        }
     };
 
 

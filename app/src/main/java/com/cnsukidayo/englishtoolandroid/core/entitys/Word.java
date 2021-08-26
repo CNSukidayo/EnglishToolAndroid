@@ -26,6 +26,8 @@ public class Word implements Serializable {
     private int days;
     private WordCategory category;
     private String audioPath;
+    private String PREPPhrase;
+    private String discriminate;
     private transient volatile Uri audioUri;
     // 和PC端不同的是,现在单词是否被标记也作为单词的属性放到类中
     private WordMarkColor wordMarkColor = WordMarkColor.DEFAULT;
@@ -86,6 +88,22 @@ public class Word implements Serializable {
         this.wordMarkColor = wordMarkColor;
     }
 
+    public String getPREPPhrase() {
+        return PREPPhrase;
+    }
+
+    public void setPREPPhrase(String PREPPhrase) {
+        this.PREPPhrase = PREPPhrase;
+    }
+
+    public String getDiscriminate() {
+        return discriminate;
+    }
+
+    public void setDiscriminate(String discriminate) {
+        this.discriminate = discriminate;
+    }
+
     /**
      * 有些时候会没有基础路径
      *
@@ -123,6 +141,8 @@ public class Word implements Serializable {
                 ", days=" + days +
                 ", category=" + category +
                 ", audioPath='" + audioPath + '\'' +
+                ", PREPPhrase='" + PREPPhrase + '\'' +
+                ", discriminate='" + discriminate + '\'' +
                 ", audioUri=" + audioUri +
                 ", wordMarkColor=" + wordMarkColor +
                 '}';

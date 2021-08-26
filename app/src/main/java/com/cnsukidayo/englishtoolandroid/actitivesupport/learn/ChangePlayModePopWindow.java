@@ -20,6 +20,7 @@ public class ChangePlayModePopWindow {
     private View dictation;
     private View englishChineseTranslate;
     private View chineseEnglishTranslate;
+    private View onlyRecite;
     private TextView preViewEnglish;
     // 事件
     private View.OnClickListener onClickListener;
@@ -60,6 +61,7 @@ public class ChangePlayModePopWindow {
         dictation = linearLayout.findViewById(R.id.dictation);
         englishChineseTranslate = linearLayout.findViewById(R.id.englishChineseTranslate);
         chineseEnglishTranslate = linearLayout.findViewById(R.id.chineseEnglishTranslate);
+        onlyRecite = linearLayout.findViewById(R.id.onlyRecite);
         preViewEnglish = linearLayout.findViewById(R.id.preViewEnglish);
     }
 
@@ -68,6 +70,7 @@ public class ChangePlayModePopWindow {
         dictation.setOnClickListener(getOnClickListener());
         englishChineseTranslate.setOnClickListener(getOnClickListener());
         chineseEnglishTranslate.setOnClickListener(getOnClickListener());
+        onlyRecite.setOnClickListener(getOnClickListener());
         preViewEnglish.setOnClickListener(v -> {
             changeIsPreEnglish(!preViewEnglishFlag);
             preViewEnglishFlagConsumer.accept(preViewEnglishFlag);
@@ -88,6 +91,9 @@ public class ChangePlayModePopWindow {
                         break;
                     case R.id.englishChineseTranslate:
                         startModConsumer.accept(StartMod.ENGLISHCHINESETRANSLATE);
+                        break;
+                    case R.id.onlyRecite:
+                        startModConsumer.accept(StartMod.ONLYRECITE);
                         break;
                 }
             };

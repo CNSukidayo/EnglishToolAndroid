@@ -16,8 +16,7 @@ public enum PartOfSpeechEnum {
     NUM("num"),
     ART("art"),
     PREP("prep"),
-    INT("int"),
-    PHTASESANDCOLLOCATION("短语&固定搭配");
+    INT("int");
     private final String name;
 
     PartOfSpeechEnum(String name) {

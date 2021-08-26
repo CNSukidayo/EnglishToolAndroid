@@ -143,13 +143,13 @@
             android:paddingEnd="10dp"
             android:paddingBottom="10dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/chineseInputRecyclerView"
+            <com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView
+                android:id="@+id/chineseDisplayRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipChildren="false">
 
-            </androidx.recyclerview.widget.RecyclerView>
+            </com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView>
         </RelativeLayout>
     </HorizontalScrollView>
 

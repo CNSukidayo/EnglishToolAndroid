@@ -15,11 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.cnsukidayo.englishtoolandroid.actitivesupport.home.HomeRecyclerViewAdapter;
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
-import com.cnsukidayo.englishtoolandroid.actitivesupport.home.HomeRecyclerViewAdapter;
 import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.cnsukidayo.englishtoolandroid.utils.GetPathUtils;
 import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
@@ -27,6 +27,9 @@ import com.cnsukidayo.englishtoolandroid.utils.ParseWordsUtils;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import cn.hutool.core.lang.Assert;
 
@@ -45,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private Button chineseEnglishTranslationModel;
     // 全选按钮
     private Button allChose;
+    // 顺序背诵按钮
+    private Button orderRecite;
+    // 介词短语背诵按钮
+    private Button PREPPhraseRecite;
     // 听音乐按钮
     private Button toMusic;
 
@@ -71,33 +78,54 @@ public class MainActivity extends AppCompatActivity {
         // 还原现场
         restoreTheScene = startTableLayout.findViewById(R.id.restoreTheScene);
         restoreTheScene.setOnClickListener(v -> {
-            // todo 问题是现在不能保存用户的单词的英文输入
             CacheQueue.SINGLE.doWork("allWords", () -> {
                 String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
                 List<Word> allWords = ParseWordsUtils.parseJsonAndGetWordsWithList(new File(absolutePath));
                 return allWords;
             });
-            Intent intent = new Intent(MainActivity.this, LearnPage.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(StartMod.class.getName(), StartMod.DICTATION.name());
-            bundle.putInt("status", 2);
-            bundle.putString("baseFilePath", baseFile.getAbsolutePath() + File.separator);
-            intent.putExtras(bundle);
-            startActivityForResult(intent, 2);
+            startActivityForResult(getIntent(LearnPage.class, bundle1 -> () -> bundle1.putString(StartMod.class.getName(), StartMod.DICTATION.name())), 2);
         });
         // 搜搜单词
         searchWord = startTableLayout.findViewById(R.id.searchWord);
-        searchWord.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SearchWord.class);
-            Bundle bundle = new Bundle();
-            bundle.putString("baseFilePath", baseFile.getAbsolutePath() + File.separator);
-            intent.putExtras(bundle);
-            startActivityForResult(intent, 1);
-        });
+        searchWord.setOnClickListener(v -> startActivityForResult(getIntent(SearchWord.class, null), 1));
         // 听写模式
         dictationModel = startTableLayout.findViewById(R.id.dictationModel);
         dictationModel.setOnClickListener(getStartOnClickListener());
-
+        // 顺序背诵
+        orderRecite = startTableLayout.findViewById(R.id.orderRecite);
+        orderRecite.setOnClickListener(v -> {
+            CacheQueue.SINGLE.doWork("allWords", () -> {
+                File englishJsonFile = new File(baseFile, EnglishToolProperties.json);
+                // 不包含supplement.json
+                File[] files = englishJsonFile.listFiles((dir, name) -> !"supplement.json".equals(name));
+                List<Word> allWords = ParseWordsUtils.parseJsonAndGetWordsWithList(Objects.requireNonNull(files));
+                allWords.sort((o1, o2) -> {
+                    char[] chars1 = o1.getEnglish().toLowerCase().toCharArray();
+                    char[] chars2 = o2.getEnglish().toLowerCase().toCharArray();
+                    for (int i = 0; i < Math.min(chars1.length, chars2.length); i++) {
+                        int result = chars1[i] - chars2[i];
+                        if (result != 0) {
+                            return result;
+                        }
+                    }
+                    return chars1.length - chars2.length;
+                });
+                return allWords;
+            });
+            startActivityForResult(getIntent(LearnPage.class, bundle1 -> () -> bundle1.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name())), 2);
+        });
+        // 所有介词短语
+        PREPPhraseRecite = startTableLayout.findViewById(R.id.PREPPhraseRecite);
+        PREPPhraseRecite.setOnClickListener(v -> {
+            CacheQueue.SINGLE.doWork("allWords", () -> {
+                File englishJsonFile = new File(baseFile, EnglishToolProperties.json);
+                List<Word> allWords = ParseWordsUtils.parseJsonAndGetWordsWithList(Objects.requireNonNull(englishJsonFile.listFiles()));
+                List<Word> collect = allWords.stream().filter(word -> word.getPREPPhrase() != null && !word.getPREPPhrase().isEmpty()).collect(Collectors.toList());
+                Collections.shuffle(collect);
+                return collect;
+            });
+            startActivityForResult(getIntent(LearnPage.class, bundle1 -> () -> bundle1.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name())), 2);
+        });
         // 中译英模式
         chineseEnglishTranslationModel = startTableLayout.findViewById(R.id.chineseEnglishTranslationModel);
         chineseEnglishTranslationModel.setOnClickListener(getStartOnClickListener());
@@ -157,24 +185,31 @@ public class MainActivity extends AppCompatActivity {
                     throwable.printStackTrace();
                 }
                 // 打乱之后的集合
-                Intent intent = new Intent(MainActivity.this, LearnPage.class);
-                Bundle bundle = new Bundle();
-                switch (view.getId()) {
-                    case R.id.dictationModel:
-                        bundle.putString(StartMod.class.getName(), StartMod.DICTATION.name());
-                        break;
-                    case R.id.chineseEnglishTranslationModel:
-                        bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
-                        break;
-                }
-                bundle.putInt("status", 2);
-                bundle.putString("baseFilePath", baseFile.getAbsolutePath());
-                intent.putExtras(bundle);
-                startActivityForResult(intent, 2);
+                startActivityForResult(getIntent(LearnPage.class, bundle -> () -> {
+                    switch (view.getId()) {
+                        case R.id.dictationModel:
+                            bundle.putString(StartMod.class.getName(), StartMod.DICTATION.name());
+                            break;
+                        case R.id.chineseEnglishTranslationModel:
+                            bundle.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
+                            break;
+                    }
+                }), 2);
             };
         }
         return startOnClickListener;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private Intent getIntent(Class cls, Function<Bundle, Runnable> function) {
+        Intent intent = new Intent(MainActivity.this, cls);
+        Bundle bundle = new Bundle();
+        bundle.putString("baseFilePath", baseFile.getAbsolutePath());
+        if (function != null) {
+            function.apply(bundle).run();
+        }
+        intent.putExtras(bundle);
+        return intent;
+    }
 
 }

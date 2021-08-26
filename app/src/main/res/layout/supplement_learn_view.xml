@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:paddingTop="5dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/prepTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="350dp"
+        android:text="介词短语&amp;固定搭配:"
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/PREPPhrase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/chinese_answer_background"
+        android:text="chinese"
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/discriminateTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="辨析:"
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/discriminateMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/chinese_answer_background"
+        android:text="message"
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="day"
+        android:textColor="@color/android_holo_blue_light"
+        android:textSize="35sp" />
+
+
+</LinearLayout>

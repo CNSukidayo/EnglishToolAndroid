@@ -27,7 +27,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.IncludeWordManager;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.IncludeWordPopWindowHandler;
@@ -128,7 +127,7 @@ public class SearchWord extends AppCompatActivity {
         topBar = findViewById(R.id.topBar);
         clearEnglishInput = findViewById(R.id.clearEnglishInput);
         day = findViewById(R.id.day);
-        RecyclerView chineseInputRecyclerView = findViewById(R.id.chineseInputRecyclerView);
+        WrapRecyclerView chineseInputRecyclerView = findViewById(R.id.chineseDisplayRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
             @Override
             public boolean canScrollHorizontally() {
@@ -136,7 +135,9 @@ public class SearchWord extends AppCompatActivity {
             }
         };
         chineseInputRecyclerView.setLayoutManager(linearLayoutManager);
-        learnPageRecyclerView = new LearnPageRecyclerView(this);
+        LinearLayout supplement = (LinearLayout) this.getLayoutInflater().inflate(R.layout.supplement_learn_view, null);
+        learnPageRecyclerView = new LearnPageRecyclerView(this, supplement);
+        chineseInputRecyclerView.addFooterView(supplement);
         chineseInputRecyclerView.setAdapter(learnPageRecyclerView);
 
         File englishJsonFile = new File(baseFilePath, EnglishToolProperties.json);
@@ -295,7 +296,7 @@ public class SearchWord extends AppCompatActivity {
         input.addTextChangedListener(watcher);
         input.setOnClickListener(v -> {
             // 这个需要自已来控制是否显示出来
-            if (input.getText().toString() != null && searchPopupWindow != null && !searchPopupWindow.isShowing()) {
+            if (input.getText().toString() != null && input.getText().toString().length() != 0 && searchPopupWindow != null && !searchPopupWindow.isShowing()) {
                 showPopWindow(input.getText().toString(), false);
             } else if (searchPopupWindow != null) {
                 searchPopupWindow.dismiss();

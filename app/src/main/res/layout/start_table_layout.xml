@@ -4,29 +4,32 @@
     android:layout_height="match_parent"
     android:paddingBottom="10dp"
     android:stretchColumns="0,1">
+
     <LinearLayout
         android:id="@+id/restoreTheScene"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@drawable/json_linear_layout_not_choose"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="0.7"
             android:gravity="center"
-            android:layout_gravity="center"
             android:text="还原现场"
             android:textColor="@color/colorBlack"
             android:textSize="28sp" />
+
         <Button
             android:id="@+id/searchWord"
             android:layout_width="0dp"
-            android:layout_gravity="center"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="0.3"
             android:text="搜索单词"
-            android:textColor="@color/colorChooseJsonButtonRed"/>
+            android:textColor="@color/colorChooseJsonButtonRed" />
     </LinearLayout>
 
     <TableRow>
@@ -51,6 +54,26 @@
             android:text="全选" />
 
     </TableRow>
+
+    <TableLayout android:stretchColumns="0,1">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/orderRecite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="顺序背诵" />
+
+            <Button
+                android:id="@+id/PREPPhraseRecite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All介词短语"
+                android:textAllCaps="false" />
+        </TableRow>
+
+    </TableLayout>
 
     <Button
         android:id="@+id/toMusic"

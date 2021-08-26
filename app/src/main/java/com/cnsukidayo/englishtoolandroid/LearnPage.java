@@ -27,7 +27,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.ChangePlayModePopWindow;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.ChaosWordPopWindow;
@@ -42,6 +41,7 @@ import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.enums.WordMarkColor;
+import com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -116,8 +116,6 @@ public class LearnPage extends AppCompatActivity {
     private Button markThisButton;
     // 开启标记模式按钮
     private Button startMarkModeButton;
-    // 临时
-    private int status;
     // baseFile
     private File baseFile;
     // 改变单词背景色的处理器
@@ -145,7 +143,7 @@ public class LearnPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_learn_page);
-        RecyclerView chineseInputRecyclerView = findViewById(R.id.chineseInputRecyclerView);
+        WrapRecyclerView chineseInputRecyclerView = findViewById(R.id.chineseDisplayRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
             @Override
             public boolean canScrollHorizontally() {
@@ -153,12 +151,13 @@ public class LearnPage extends AppCompatActivity {
             }
         };
         chineseInputRecyclerView.setLayoutManager(linearLayoutManager);
-        learnPageRecyclerView = new LearnPageRecyclerView(this);
+        LinearLayout supplement = (LinearLayout) this.getLayoutInflater().inflate(R.layout.supplement_learn_view, null);
+        learnPageRecyclerView = new LearnPageRecyclerView(this, supplement);
+        chineseInputRecyclerView.addFooterView(supplement);
         chineseInputRecyclerView.setAdapter(learnPageRecyclerView);
 
         this.allWorlds = CacheQueue.SINGLE.get("allWords");
         startMod = StartMod.valueOf(getIntent().getExtras().getString(StartMod.class.getName()));
-        this.status = getIntent().getExtras().getInt("status");
         String baseFilePath = getIntent().getExtras().getString("baseFilePath");
         if (baseFilePath != null) {
             this.baseFile = new File(baseFilePath);
@@ -433,11 +432,6 @@ public class LearnPage extends AppCompatActivity {
                 ioException.printStackTrace();
             }
         });
-        englishAnswerTextView.setOnClickListener(v -> {
-            Word word = allWorlds.get(current);
-            Toast toast = Toast.makeText(getApplicationContext(), "第" + word.getDays() + "天", Toast.LENGTH_SHORT);
-            toast.show();
-        });
         // 单词归纳功能
         induceWord.setOnClickListener(v -> {
             // 现在采用延迟加载
@@ -496,13 +490,11 @@ public class LearnPage extends AppCompatActivity {
     private View.OnClickListener getPlayClickListener() {
         if (playClickListener == null) {
             playClickListener = v -> {
-                // 缓存单词PE特有,先缓存当前写好的单词再切换 但是在混乱模式时不可用
-                if (nowChaosMode == WordMarkColor.DEFAULT) {
-                    playerWriteWordsCache.put(allWorlds.get(current).getEnglish(), learnPageRecyclerView.getWordFromInPutText());
-                }
+                boolean changeIndex = false;
                 switch (v.getId()) {
                     case R.id.preButton:
                         isFirstCheckAnswer = false;
+                        changeIndex = true;
                         if (current == 0) {
                             current = allWorlds.size() - 1;
                         } else {
@@ -514,6 +506,7 @@ public class LearnPage extends AppCompatActivity {
                         break;
                     case R.id.nextButton:
                         isFirstCheckAnswer = false;
+                        changeIndex = true;
                         if (current == allWorlds.size() - 1) {
                             current = 0;
                         } else {
@@ -525,21 +518,16 @@ public class LearnPage extends AppCompatActivity {
                         break;
                 }
                 // 不管怎样最终都要播放音效
-                if (startMod != StartMod.ENGLISHCHINESETRANSLATE) {
+                if (startMod != StartMod.ENGLISHCHINESETRANSLATE && !changeIndex) {
                     playMedia(allWorlds.get(current));
                 }
-                // 加载新位置的单词
-                learnPageRecyclerView.setInPutTextFromWord(playerWriteWordsCache.get(allWorlds.get(current).getEnglish()));
                 markWordButtonBackGroundChangeHandler.changeButtonBackGround(allWorlds.get(current).getWordMarkColor());
                 progressTextView.setText((current + 1) + "/" + allWorlds.size());
                 // 可以改进
                 startMod.englishAnswerValueHandle(allWorlds.get(current), englishAnswerTextView, learnPageRecyclerView);
                 achievementTextView.setText("");
-                if (startMod != StartMod.ENGLISHCHINESETRANSLATE) {
+                if (startMod == StartMod.DICTATION || startMod == StartMod.CHINESEENGLISHTRANSLATE) {
                     learnPageRecyclerView.setAnswerLabelTextFromWord(null);
-                }
-                if (status == 0) {
-                    checkAnswersButton.performClick();
                 }
             };
         }

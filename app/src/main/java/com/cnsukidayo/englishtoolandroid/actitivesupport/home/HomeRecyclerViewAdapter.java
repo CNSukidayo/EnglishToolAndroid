@@ -95,18 +95,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     }
 
     /**
-     * 得到所有单词
-     */
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public List<Word> getAllWords() {
-        List<Word> words = new ArrayList<>(80);
-        for (ChooseDaysButton chooseDaysButton : allChooseDaysButton.values()) {
-            chooseDaysButton.getThisDayWords(words);
-        }
-        return words;
-    }
-
-    /**
      * 判断当前用户至少选择了一天
      *
      * @return true:用户选择了一天 false:用户一天都没选择.
