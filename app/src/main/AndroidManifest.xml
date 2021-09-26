@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,8 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SearchWord"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".ImaginationMode"></activity>
+        <activity
+            android:name=".TimeRecordActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ControllerComputerActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".SearchWord"
+            android:windowSoftInputMode="stateHidden" />
 
         <receiver android:name=".actitivesupport.music.MediaButtonReceiver">
             <intent-filter>

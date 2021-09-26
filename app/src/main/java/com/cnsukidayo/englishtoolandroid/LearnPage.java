@@ -7,7 +7,6 @@ import android.media.AsyncPlayer;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,6 +36,7 @@ import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModeButtonBac
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkModePopWindow;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkWordButtonBackGroundChangeHandler;
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkWordPopWindow;
+import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
@@ -196,7 +196,7 @@ public class LearnPage extends AppCompatActivity {
         includeWordPopWindowHandler = new IncludeWordPopWindowHandler(this, includeWordPopLayout, includeWordManager);
         includeWordPopWindowHandler.setPlayConsumer(this::playMedia);
         includeWordPopWindowHandler.setSaveIncludeRunnable(() -> {
-            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
+            String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + EnglishToolProperties.include;
             try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
                 String result = gson.toJson(includeWordManager);
                 writer.write(result.getBytes(StandardCharsets.UTF_8));
@@ -423,7 +423,7 @@ public class LearnPage extends AppCompatActivity {
         });
         // 保存现场
         saveScene.setOnClickListener(v -> {
-            String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
+            String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + "scene.json";
             try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
                 String result = gson.toJson(allWorlds);
                 writer.write(result.getBytes(StandardCharsets.UTF_8));
@@ -458,7 +458,7 @@ public class LearnPage extends AppCompatActivity {
     }
 
     private IncludeWordManager getIncludeWordManager() {
-        String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "include.json";
+        String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + EnglishToolProperties.include;
         File includeFile = new File(absolutePath);
         IncludeWordManager result = null;
         if (includeFile.exists()) {

@@ -24,6 +24,7 @@
     <color name="colorDarkMagic">#B20DFF</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorThisFlagTrue">#41B01E</color>
+    <color name="darkGreen">#008011</color>
     <color name="colorThisFlagFalse">#FF695D</color>
     <color name="colorStartFlagMode">#FF19E0</color>
     <color name="android_holo_red_light">@android:color/holo_red_light</color>

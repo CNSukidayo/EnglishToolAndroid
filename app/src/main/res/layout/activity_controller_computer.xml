@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ControllerComputerActivity">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0,1">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/keyboardUP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="键盘上" />
+
+            <Button
+                android:id="@+id/keyboardDOWN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="键盘下" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/keyboardLEFT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="键盘左" />
+
+            <Button
+                android:id="@+id/keyboardRIGHT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="键盘右" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/mouseUP"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="鼠标上" />
+
+            <Button
+                android:id="@+id/mouseDOWN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="鼠标下" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/mouseLEFT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="鼠标左" />
+
+            <Button
+                android:id="@+id/mouseRIGHT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="鼠标右" />
+        </TableRow>
+    </TableLayout>
+
+
+</LinearLayout>

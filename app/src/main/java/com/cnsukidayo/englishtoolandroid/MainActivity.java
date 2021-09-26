@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -52,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private Button orderRecite;
     // 介词短语背诵按钮
     private Button PREPPhraseRecite;
+    // 计时模式
+    private Button timeRecord;
+    // 联想模式
+    private Button imaginationMode;
     // 听音乐按钮
     private Button toMusic;
+    // 控制电脑按钮
+    private Button controlComputer;
 
     private File baseFile;
 
@@ -79,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         restoreTheScene = startTableLayout.findViewById(R.id.restoreTheScene);
         restoreTheScene.setOnClickListener(v -> {
             CacheQueue.SINGLE.doWork("allWords", () -> {
-                String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "scene.json";
+                String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + "scene.json";
                 List<Word> allWords = ParseWordsUtils.parseJsonAndGetWordsWithList(new File(absolutePath));
                 return allWords;
             });
@@ -148,11 +153,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        // 计时模式
+        timeRecord = startTableLayout.findViewById(R.id.timeRecord);
+        timeRecord.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TimeRecordActivity.class);
+            startActivityForResult(intent, 5);
+        });
+        // 联想模式
+        imaginationMode = startTableLayout.findViewById(R.id.imaginationMode);
+        imaginationMode.setOnClickListener(v -> startActivityForResult(getIntent(ImaginationMode.class, null), 6));
         // 听音乐按钮
         toMusic = startTableLayout.findViewById(R.id.toMusic);
         toMusic.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, MusicActivity.class);
             startActivityForResult(intent, 3);
+        });
+        // 控制电脑按钮
+        controlComputer = startTableLayout.findViewById(R.id.controlComputer);
+        controlComputer.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ControllerComputerActivity.class);
+            startActivityForResult(intent, 4);
         });
     }
 

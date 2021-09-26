@@ -55,7 +55,7 @@
 
     </TableRow>
 
-    <TableLayout android:stretchColumns="0,1">
+    <TableLayout android:stretchColumns="0,1,2">
 
         <TableRow>
 
@@ -71,14 +71,35 @@
                 android:layout_height="wrap_content"
                 android:text="All介词短语"
                 android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/imaginationMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联想模式"
+                android:textAllCaps="false" />
+
         </TableRow>
 
     </TableLayout>
+
+    <Button
+        android:id="@+id/timeRecord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="计时模式"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/toMusic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="听音乐" />
+
+    <Button
+        android:id="@+id/controlComputer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="控制电脑" />
 
 </TableLayout>
