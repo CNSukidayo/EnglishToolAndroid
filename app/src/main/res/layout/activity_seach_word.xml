@@ -106,7 +106,7 @@
         <TableRow android:id="@+id/controllerTableRow">
 
             <Button
-                android:id="@+id/playButton"
+                android:id="@+id/checkButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="播放" />

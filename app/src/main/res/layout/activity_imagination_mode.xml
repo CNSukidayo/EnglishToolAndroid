@@ -133,10 +133,10 @@
                 android:textSize="28sp" />
 
             <Button
-                android:id="@+id/playButton"
+                android:id="@+id/checkButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="结果+播放" />
+                android:text="结果" />
 
             <Button
                 android:id="@+id/clearEnglishInput"
@@ -204,6 +204,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="下一个" />
+
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="播放" />
 
 
         </TableRow>

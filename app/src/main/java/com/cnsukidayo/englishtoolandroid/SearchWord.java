@@ -121,7 +121,7 @@ public class SearchWord extends AppCompatActivity {
         back = findViewById(R.id.back);
         input = findViewById(R.id.input);
         englishAnswerTextView = findViewById(R.id.result);
-        playButton = findViewById(R.id.playButton);
+        playButton = findViewById(R.id.checkButton);
         stopButton = findViewById(R.id.stopButton);
         induceWord = findViewById(R.id.induceWord);
         topBar = findViewById(R.id.topBar);

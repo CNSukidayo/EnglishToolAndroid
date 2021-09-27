@@ -53,11 +53,14 @@ public class ImaginationMode extends AppCompatActivity {
     private Gson gson = new Gson();
     private Imagination imagination;
     // 检查+播放按钮
+    private Button checkButton;
+    // 播放按钮
     private Button playButton;
     // 输入框
     private EditText input;
     // 当前单词的引用
     private Word current;
+    private Word current2;
     // 清除输入框
     private Button clearEnglishInput;
     // 正确库按钮
@@ -113,6 +116,7 @@ public class ImaginationMode extends AppCompatActivity {
         chineseInputRecyclerView.setAdapter(learnPageRecyclerView);
 
         playButton = findViewById(R.id.playButton);
+        checkButton = findViewById(R.id.checkButton);
         input = findViewById(R.id.input);
         clearEnglishInput = findViewById(R.id.clearEnglishInput);
         allPool = findViewById(R.id.allPool);
@@ -131,7 +135,17 @@ public class ImaginationMode extends AppCompatActivity {
         saveProgress = findViewById(R.id.saveProgress);
         imagination = getImagination();
         // 查看结果
-        playButton.setOnClickListener(v -> {
+        checkButton.setOnClickListener(v -> {
+            if (current2 != null) {
+                learnPageRecyclerView.setAnswerLabelTextFromWord(current2);
+                playMedia(current2);
+                current2 = null;
+                return;
+            }
+            if (current != null) {
+                Toast.makeText(getApplicationContext(), "当前单词还没有添加到库中", Toast.LENGTH_LONG).show();
+                return;
+            }
             String inputText = input.getText().toString();
             Word word = imagination.getAllWorld().get(inputText);
             updatePool();
@@ -173,11 +187,12 @@ public class ImaginationMode extends AppCompatActivity {
         });
         // 只有随机出来的单词是直接加到被动库里的
         randomButton.setOnClickListener(v -> {
-            current = imagination.getAllWorld().values().iterator().next();
-            imagination.getAllWorld().remove(current.getEnglish());
-            imagination.getPassive().put(current.getEnglish(), current);
-            imagination.getPassiveList().add(current);
-            input.setText(current.getEnglish());
+            current2 = imagination.getAllWorld().values().iterator().next();
+            imagination.getAllWorld().remove(current2.getEnglish());
+            imagination.getPassive().put(current2.getEnglish(), current2);
+            imagination.getPassiveList().add(current2);
+            learnPageRecyclerView.setAnswerLabelTextFromWord(null);
+            input.setText(current2.getEnglish());
             updatePool();
         });
         // 上一个按钮
@@ -191,6 +206,7 @@ public class ImaginationMode extends AppCompatActivity {
                 progressView.setText(index + 1 + "/" + oneList.size());
                 Word word = oneList.get(index);
                 learnPageRecyclerView.setAnswerLabelTextFromWord(word);
+                input.setText(word.getEnglish());
                 playMedia(word);
             }
         });
@@ -205,6 +221,7 @@ public class ImaginationMode extends AppCompatActivity {
                 progressView.setText(index + 1 + "/" + oneList.size());
                 Word word = oneList.get(index);
                 learnPageRecyclerView.setAnswerLabelTextFromWord(word);
+                input.setText(word.getEnglish());
                 playMedia(word);
             }
         });
@@ -228,6 +245,15 @@ public class ImaginationMode extends AppCompatActivity {
                 writer.flush();
             } catch (IOException ioException) {
                 ioException.printStackTrace();
+            }
+        });
+        // 播放音频
+        playButton.setOnClickListener(v -> {
+            if (current != null) {
+                playMedia(current);
+            }
+            if (current2 != null) {
+                playMedia(current2);
             }
         });
     }

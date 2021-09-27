@@ -170,7 +170,7 @@ public class LearnPage extends AppCompatActivity {
         input = findViewById(R.id.input);
         clearEnglishInput = findViewById(R.id.clearEnglishInput);
         preButton = findViewById(R.id.preButton);
-        playButton = findViewById(R.id.playButton);
+        playButton = findViewById(R.id.checkButton);
         nextButton = findViewById(R.id.nextButton);
         stopButton = findViewById(R.id.stopButton);
         markThisButton = findViewById(R.id.markThisButton);
