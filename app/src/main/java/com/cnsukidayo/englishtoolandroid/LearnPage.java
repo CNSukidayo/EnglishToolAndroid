@@ -38,6 +38,7 @@ import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkWordButtonBac
 import com.cnsukidayo.englishtoolandroid.actitivesupport.learn.MarkWordPopWindow;
 import com.cnsukidayo.englishtoolandroid.context.EnglishToolProperties;
 import com.cnsukidayo.englishtoolandroid.core.cache.CacheQueue;
+import com.cnsukidayo.englishtoolandroid.core.entitys.Imagination;
 import com.cnsukidayo.englishtoolandroid.core.entitys.Word;
 import com.cnsukidayo.englishtoolandroid.core.enums.StartMod;
 import com.cnsukidayo.englishtoolandroid.core.enums.WordMarkColor;
@@ -135,6 +136,9 @@ public class LearnPage extends AppCompatActivity {
     private IncludeWordManager includeWordManager;
     // 序列化和反序列化工具
     private Gson gson = new Gson();
+    // 当前模式的状态码
+    private int code = 0;
+    private Imagination imagination;
 
     @SuppressLint("ShowToast")
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -155,8 +159,18 @@ public class LearnPage extends AppCompatActivity {
         learnPageRecyclerView = new LearnPageRecyclerView(this, supplement);
         chineseInputRecyclerView.addFooterView(supplement);
         chineseInputRecyclerView.setAdapter(learnPageRecyclerView);
-
-        this.allWorlds = CacheQueue.SINGLE.get("allWords");
+        // 可能是背错误库或正确库
+        code = getIntent().getExtras().getInt("code");
+        if (code == 0) {
+            this.allWorlds = CacheQueue.SINGLE.get("allWords");
+        } else {
+            imagination = getImagination();
+            if (code == 1) {
+                allWorlds = imagination.getErrList();
+            } else if (code == 2) {
+                allWorlds = imagination.getActiveList();
+            }
+        }
         startMod = StartMod.valueOf(getIntent().getExtras().getString(StartMod.class.getName()));
         String baseFilePath = getIntent().getExtras().getString("baseFilePath");
         if (baseFilePath != null) {
@@ -423,13 +437,24 @@ public class LearnPage extends AppCompatActivity {
         });
         // 保存现场
         saveScene.setOnClickListener(v -> {
-            String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + "scene.json";
-            try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
-                String result = gson.toJson(allWorlds);
-                writer.write(result.getBytes(StandardCharsets.UTF_8));
-                writer.flush();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
+            if (code == 0) {
+                String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + "scene.json";
+                try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
+                    String result = gson.toJson(allWorlds);
+                    writer.write(result.getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            } else if (code == 1 || code == 2) {
+                String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + EnglishToolProperties.imagination;
+                try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
+                    String result = gson.toJson(imagination);
+                    writer.write(result.getBytes(StandardCharsets.UTF_8));
+                    writer.flush();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
         // 单词归纳功能
@@ -555,4 +580,17 @@ public class LearnPage extends AppCompatActivity {
         return current;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private Imagination getImagination() {
+        String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + EnglishToolProperties.imagination;
+        File imaginationFile = new File(absolutePath);
+        if (imaginationFile.exists()) {
+            try {
+                return gson.fromJson(new FileReader(imaginationFile), Imagination.class);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        throw new RuntimeException("读取错误/正确库失败!");
+    }
 }

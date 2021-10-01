@@ -53,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private Button PREPPhraseRecite;
     // 计时模式
     private Button timeRecord;
+    // 错误库
+    private Button errorPool;
+    // 正确库
+    private Button rightPool;
     // 联想模式
     private Button imaginationMode;
     // 听音乐按钮
@@ -159,6 +163,18 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, TimeRecordActivity.class);
             startActivityForResult(intent, 5);
         });
+        // 错误库
+        errorPool = startTableLayout.findViewById(R.id.errorPool);
+        errorPool.setOnClickListener(v -> startActivityForResult(getIntent(LearnPage.class, bundle1 -> () -> {
+            bundle1.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
+            bundle1.putInt("code", 1);
+        }), 2));
+        // 正确库
+        rightPool = startTableLayout.findViewById(R.id.rightPool);
+        rightPool.setOnClickListener(v -> startActivityForResult(getIntent(LearnPage.class, bundle1 -> () -> {
+            bundle1.putString(StartMod.class.getName(), StartMod.CHINESEENGLISHTRANSLATE.name());
+            bundle1.putInt("code", 2);
+        }), 2));
         // 联想模式
         imaginationMode = startTableLayout.findViewById(R.id.imaginationMode);
         imaginationMode.setOnClickListener(v -> startActivityForResult(getIntent(ImaginationMode.class, null), 6));
@@ -225,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, cls);
         Bundle bundle = new Bundle();
         bundle.putString("baseFilePath", baseFile.getAbsolutePath());
+        bundle.putInt("code", 0);
         if (function != null) {
             function.apply(bundle).run();
         }

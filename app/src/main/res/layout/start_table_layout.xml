@@ -83,12 +83,34 @@
 
     </TableLayout>
 
-    <Button
-        android:id="@+id/timeRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="计时模式"
-        android:textAllCaps="false" />
+    <TableLayout android:stretchColumns="0">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/timeRecord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="计时模式"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/errorPool"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="错误库"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/rightPool"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正确库"
+                android:textAllCaps="false" />
+
+        </TableRow>
+
+    </TableLayout>
 
     <Button
         android:id="@+id/toMusic"

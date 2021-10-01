@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class ImaginationMode extends AppCompatActivity {
 
@@ -81,8 +82,6 @@ public class ImaginationMode extends AppCompatActivity {
     private Button onlyRight;
     // 只有错误
     private Button onlyError;
-    // 只有被动
-    private Button onlyPassive;
     // 进度
     private TextView progressView;
     // 保存进度
@@ -91,8 +90,7 @@ public class ImaginationMode extends AppCompatActivity {
     private TextView allPool;
     private TextView rightPool;
     private TextView errorPool;
-    private TextView passivePool;
-
+    private Random random = new Random();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -122,7 +120,6 @@ public class ImaginationMode extends AppCompatActivity {
         allPool = findViewById(R.id.allPool);
         rightPool = findViewById(R.id.rightPool);
         errorPool = findViewById(R.id.errorPool);
-        passivePool = findViewById(R.id.passivePool);
         rightButton = findViewById(R.id.rightButton);
         errorButton = findViewById(R.id.errorButton);
         randomButton = findViewById(R.id.randomButton);
@@ -130,7 +127,6 @@ public class ImaginationMode extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         onlyRight = findViewById(R.id.onlyRight);
         onlyError = findViewById(R.id.onlyError);
-        onlyPassive = findViewById(R.id.onlyPassive);
         progressView = findViewById(R.id.progressView);
         saveProgress = findViewById(R.id.saveProgress);
         imagination = getImagination();
@@ -139,6 +135,7 @@ public class ImaginationMode extends AppCompatActivity {
             if (current2 != null) {
                 learnPageRecyclerView.setAnswerLabelTextFromWord(current2);
                 playMedia(current2);
+                current = current2;
                 current2 = null;
                 return;
             }
@@ -166,7 +163,6 @@ public class ImaginationMode extends AppCompatActivity {
             if (current != null) {
                 Word remove = imagination.getAllWorld().remove(current.getEnglish());
                 if (remove != null) {
-                    imagination.getActive().put(current.getEnglish(), current);
                     imagination.getActiveList().add(current);
                     current = null;
                     updatePool();
@@ -178,22 +174,25 @@ public class ImaginationMode extends AppCompatActivity {
             if (current != null) {
                 Word remove = imagination.getAllWorld().remove(current.getEnglish());
                 if (remove != null) {
-                    imagination.getErr().put(current.getEnglish(), current);
                     imagination.getErrList().add(current);
                     current = null;
                     updatePool();
                 }
             }
         });
-        // 只有随机出来的单词是直接加到被动库里的
+        // 随机取一个
         randomButton.setOnClickListener(v -> {
-            current2 = imagination.getAllWorld().values().iterator().next();
-            imagination.getAllWorld().remove(current2.getEnglish());
-            imagination.getPassive().put(current2.getEnglish(), current2);
-            imagination.getPassiveList().add(current2);
-            learnPageRecyclerView.setAnswerLabelTextFromWord(null);
-            input.setText(current2.getEnglish());
-            updatePool();
+            if (current == null && current2 == null) {
+                // 随机取一个保存到current中
+                String[] strings = imagination.getAllWorld().keySet().toArray(new String[0]);
+                String key = strings[random.nextInt(strings.length)];
+                current2 = imagination.getAllWorld().get(key);
+                learnPageRecyclerView.setAnswerLabelTextFromWord(null);
+                input.setText(current2.getEnglish());
+                updatePool();
+            } else {
+                Toast.makeText(getApplicationContext(), "当前单词还没有添加到库中", Toast.LENGTH_LONG).show();
+            }
         });
         // 上一个按钮
         preButton.setOnClickListener(v -> {
@@ -233,10 +232,6 @@ public class ImaginationMode extends AppCompatActivity {
             index = 0;
             oneList = imagination.getErrList();
         });
-        onlyPassive.setOnClickListener(v -> {
-            index = 0;
-            oneList = imagination.getPassiveList();
-        });
         saveProgress.setOnClickListener(v -> {
             String absolutePath = EnglishToolProperties.internalEntireEnglishSourcePath + EnglishToolProperties.imagination;
             try (FileOutputStream writer = new FileOutputStream(absolutePath)) {
@@ -271,12 +266,8 @@ public class ImaginationMode extends AppCompatActivity {
             }
         }
         result = new Imagination();
-        result.setErr(new HashMap<>());
-        result.setPassive(new HashMap<>());
-        result.setActive(new HashMap<>());
         result.setAllWorld(new HashMap<>());
         result.setActiveList(new ArrayList<>());
-        result.setPassiveList(new ArrayList<>());
         result.setErrList(new ArrayList<>());
         File englishJsonFile = new File(baseFilePath, EnglishToolProperties.json);
         // 不包含supplement.json
@@ -297,9 +288,8 @@ public class ImaginationMode extends AppCompatActivity {
      */
     private void updatePool() {
         allPool.setText("总库剩余:" + imagination.getAllWorld().size());
-        rightPool.setText("正确库数量:" + imagination.getActive().size());
-        errorPool.setText("错题库数量:" + imagination.getErr().size());
-        passivePool.setText("被动库数量:" + imagination.getPassive().size());
+        rightPool.setText("正确库数量:" + imagination.getActiveList().size());
+        errorPool.setText("错题库数量:" + imagination.getErrList().size());
     }
 
 }

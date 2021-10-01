@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class ChooseDaysButtonTest {
 
@@ -29,6 +30,14 @@ public class ChooseDaysButtonTest {
         map.put("1", "1");
         map.values().iterator().next();
         System.out.println(map.size());
+    }
+
+    @Test
+    public void testRandom() {
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            System.out.println(random.nextInt(1));
+        }
     }
 
 }
