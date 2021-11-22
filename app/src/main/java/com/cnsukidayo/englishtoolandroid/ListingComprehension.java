@@ -107,7 +107,6 @@ public class ListingComprehension extends AppCompatActivity {
                 randomMusicSuspend.setText("暂停播放");
             }
         });
-        // todo 模拟问题
         run2s.setOnClickListener(getChangePosition());
         run5s.setOnClickListener(getChangePosition());
         run30s.setOnClickListener(getChangePosition());
