@@ -52,6 +52,8 @@ public class TimeRecordActivity extends AppCompatActivity {
     private TextView another;
     private TextView timeMo;
     private Button failThis;
+    private Button run30s;
+    private Button stop;
 
     private Gson gson = new Gson();
     private TimeRecord timeRecord;
@@ -156,6 +158,8 @@ public class TimeRecordActivity extends AppCompatActivity {
         timeSettingView = findViewById(R.id.timeSettingView);
         another = findViewById(R.id.another);
         timeMo = findViewById(R.id.timeMo);
+        run30s = findViewById(R.id.run30s);
+        stop = findViewById(R.id.stop);
         // 先读取到TimeRecord
         this.timeRecord = getTimeRecord();
         articleTime.setText(timeRecord.getArticle());
@@ -244,6 +248,14 @@ public class TimeRecordActivity extends AppCompatActivity {
                 timeSettingView.setVisibility(View.VISIBLE);
             }
         });
+
+        // 步进30s
+        run30s.setOnClickListener(v -> {
+            localTime = localTime.plusSeconds(30);
+            timeMoLocalTime = timeMoLocalTime.plusSeconds(30);
+        });
+        // 暂停
+        stop.setOnClickListener(v -> runFlag = !runFlag);
     }
 
     private TimeRecord getTimeRecord() {
@@ -263,6 +275,8 @@ public class TimeRecordActivity extends AppCompatActivity {
 
     }
 
+    private boolean runFlag = true;
+
     @SuppressLint("ResourceAsColor")
     private void startTimeHandle() {
         passTimeView.setVisibility(View.VISIBLE);
@@ -274,9 +288,11 @@ public class TimeRecordActivity extends AppCompatActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Message message = new Message();
-                message.what = 0;
-                handler.sendMessage(message);
+                if (runFlag) {
+                    Message message = new Message();
+                    message.what = 0;
+                    handler.sendMessage(message);
+                }
             }
         }, 0, 1000);
     }

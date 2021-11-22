@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorLeanPageBackGround"
+        android:orientation="horizontal"
+        android:paddingBottom="-5dp">
+
+        <Button
+            android:id="@+id/back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@drawable/back_fillet"
+            android:gravity="left|center"
+            android:minHeight="35dp"
+            android:text="〈"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/musicText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="left|center_vertical"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:text=""
+            android:textColor="@color/colorBlack"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/musicRelativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false">
+
+        <com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView
+            android:id="@+id/musicRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:paddingEnd="10dp">
+
+        </com.cnsukidayo.englishtoolandroid.myview.WrapRecyclerView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorWhite"
+            tools:ignore="NotSibling">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/musicBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0:00/0:00"
+                    android:textColor="@color/colorBlack" />
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingBottom="5dp"
+                    android:stretchColumns="1,2">
+
+                    <TableRow>
+
+                        <Button
+                            android:id="@+id/back30s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-30" />
+
+                        <Button
+                            android:id="@+id/back5s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-5" />
+
+                        <Button
+                            android:id="@+id/run5s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+5" />
+
+
+                        <Button
+                            android:id="@+id/run30s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+30" />
+                    </TableRow>
+                </TableLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:paddingBottom="5dp"
+                    android:stretchColumns="0,1,2">
+
+                    <TableRow>
+
+                        <Button
+                            android:id="@+id/back2s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-2" />
+
+                        <Button
+                            android:id="@+id/randomMusicSuspend"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/check_flag_word_fillet"
+                            android:text="暂停" />
+
+                        <Button
+                            android:id="@+id/run2s"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+2" />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

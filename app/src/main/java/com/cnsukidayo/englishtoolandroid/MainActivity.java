@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private Button imaginationMode;
     // 听音乐按钮
     private Button toMusic;
+    // 听力按钮
+    private TextView listingComprehension;
     // 控制电脑按钮
     private Button controlComputer;
 
@@ -183,6 +186,12 @@ public class MainActivity extends AppCompatActivity {
         toMusic.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, MusicActivity.class);
             startActivityForResult(intent, 3);
+        });
+        // 听力按钮
+        listingComprehension = startTableLayout.findViewById(R.id.listingComprehension);
+        listingComprehension.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ListingComprehension.class);
+            startActivityForResult(intent, 6);
         });
         // 控制电脑按钮
         controlComputer = startTableLayout.findViewById(R.id.controlComputer);

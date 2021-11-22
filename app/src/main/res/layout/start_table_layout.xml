@@ -32,6 +32,18 @@
             android:textColor="@color/colorChooseJsonButtonRed" />
     </LinearLayout>
 
+    <TextView
+        android:layout_marginTop="8dp"
+        android:id="@+id/listingComprehension"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:background="@drawable/background_blue"
+        android:gravity="center"
+        android:text="新东方听力"
+        android:textColor="@color/colorBlack"
+        android:textSize="28sp" />
+
     <TableRow>
 
         <Button

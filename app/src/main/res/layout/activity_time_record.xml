@@ -5,289 +5,289 @@
     android:layout_height="match_parent"
     tools:context=".TimeRecordActivity">
 
-        <RelativeLayout
-            android:id="@+id/timeSettingView"
+    <RelativeLayout
+        android:id="@+id/timeSettingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:stretchColumns="1,2">
 
-            <TableLayout
-                android:layout_marginTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="1,2">
+            <TableRow>
 
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/articleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="作文"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="26sp" />
-
-                    <EditText
-                        android:id="@+id/articleTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:digits="0123456789:"
-                        android:hint="输入时间"
-                        android:singleLine="true"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/cautiousReadTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="仔细阅读"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="25sp" />
-
-                    <EditText
-                        android:id="@+id/cautiousReadTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:digits="0123456789:"
-                        android:hint="输入时间"
-                        android:singleLine="true"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/doubleCautiousReadTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="仔细阅读X2"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="25sp" />
-
-                    <EditText
-                        android:id="@+id/doubleCautiousReadTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:digits="0123456789:"
-                        android:hint="输入时间"
-                        android:singleLine="true"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/translateTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="翻译"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="25sp" />
-
-                    <EditText
-                        android:id="@+id/translateTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:digits="0123456789:"
-                        android:hint="输入时间"
-                        android:singleLine="true"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/matchParagraphTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="段落匹配"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="25sp" />
-
-                    <EditText
-                        android:id="@+id/matchParagraphTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:digits="0123456789:"
-                        android:hint="输入时间"
-                        android:singleLine="true"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp" />
-                </TableRow>
-
-                <TableRow>
-
-                    <TextView
-                        android:id="@+id/matchWordTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="选词填空"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="25sp" />
-
-                    <EditText
-                        android:id="@+id/matchWordTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:digits="0123456789:"
-                        android:hint="输入时间"
-                        android:singleLine="true"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="24sp" />
-                </TableRow>
-
-                <TableRow android:layout_marginTop="5dp">
-
-                    <TextView
-                        android:id="@+id/mockExamine"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:gravity="center_horizontal"
-                        android:text="模拟考试"
-                        android:textAllCaps="false"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="25sp" />
-                </TableRow>
-
-            </TableLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="10dp"
-                android:gravity="right">
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/articleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="作文"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="26sp" />
 
-                    <RadioGroup
-                        android:id="@+id/radioGroup"
+                <EditText
+                    android:id="@+id/articleTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:digits="0123456789:"
+                    android:hint="输入时间"
+                    android:singleLine="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/cautiousReadTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="仔细阅读"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+
+                <EditText
+                    android:id="@+id/cautiousReadTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:digits="0123456789:"
+                    android:hint="输入时间"
+                    android:singleLine="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/doubleCautiousReadTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="仔细阅读X2"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+
+                <EditText
+                    android:id="@+id/doubleCautiousReadTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:digits="0123456789:"
+                    android:hint="输入时间"
+                    android:singleLine="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/translateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="翻译"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+
+                <EditText
+                    android:id="@+id/translateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:digits="0123456789:"
+                    android:hint="输入时间"
+                    android:singleLine="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/matchParagraphTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="段落匹配"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+
+                <EditText
+                    android:id="@+id/matchParagraphTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:digits="0123456789:"
+                    android:hint="输入时间"
+                    android:singleLine="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:id="@+id/matchWordTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="选词填空"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+
+                <EditText
+                    android:id="@+id/matchWordTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:digits="0123456789:"
+                    android:hint="输入时间"
+                    android:singleLine="true"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="24sp" />
+            </TableRow>
+
+            <TableRow android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/mockExamine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_horizontal"
+                    android:text="模拟考试"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="25sp" />
+            </TableRow>
+
+        </TableLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:gravity="right">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/articleButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="22dp" />
 
-                        <RadioButton
-                            android:id="@+id/articleButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="22dp" />
+                    <RadioButton
+                        android:id="@+id/cautiousButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp" />
 
-                        <RadioButton
-                            android:id="@+id/cautiousButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp" />
+                    <RadioButton
+                        android:id="@+id/doubleCautiousButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="21dp" />
 
-                        <RadioButton
-                            android:id="@+id/doubleCautiousButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="21dp" />
+                    <RadioButton
+                        android:id="@+id/translateButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="22dp" />
 
-                        <RadioButton
-                            android:id="@+id/translateButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="22dp" />
+                    <RadioButton
+                        android:id="@+id/matchParagraphButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp" />
 
-                        <RadioButton
-                            android:id="@+id/matchParagraphButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp" />
+                    <RadioButton
+                        android:id="@+id/matchWordButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp" />
 
-                        <RadioButton
-                            android:id="@+id/matchWordButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="20dp" />
+                    <RadioButton
+                        android:id="@+id/mockExamineButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" />
 
-                        <RadioButton
-                            android:id="@+id/mockExamineButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp" />
+                </RadioGroup>
+            </LinearLayout>
 
-                    </RadioGroup>
-                </LinearLayout>
+        </RelativeLayout>
 
-            </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp">
 
-            <RelativeLayout
+            <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp">
+                android:stretchColumns="0,1">
 
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="0,1">
+                <TableRow>
 
-                    <TableRow>
+                    <Button
+                        android:id="@+id/startTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="开始计时"
+                        android:textAllCaps="false" />
 
-                        <Button
-                            android:id="@+id/startTime"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="开始计时"
-                            android:textAllCaps="false" />
+                    <Button
+                        android:id="@+id/saveSetting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="保存设置"
+                        android:textAllCaps="false" />
 
-                        <Button
-                            android:id="@+id/saveSetting"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="保存设置"
-                            android:textAllCaps="false" />
-
-                    </TableRow>
-                </TableLayout>
-            </RelativeLayout>
+                </TableRow>
+            </TableLayout>
         </RelativeLayout>
+    </RelativeLayout>
 
 
     <!--    显示时间界面-->
@@ -296,7 +296,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorNotChooseJsonButtonGreen"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -305,12 +305,12 @@
             android:layout_centerInParent="true">
 
             <LinearLayout
-                android:paddingTop="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="15dp">
 
                 <TextView
                     android:id="@+id/timeMo"
@@ -338,23 +338,47 @@
                 android:textSize="55sp" />
 
             <TextView
-                android:paddingLeft="25dp"
-                android:paddingRight="25dp"
                 android:id="@+id/another"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
                 android:text="double"
                 android:textColor="@color/colorBlack"
                 android:textSize="25sp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/failThis"
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:layout_alignParentBottom="true"
-            android:text="Click!"
-            android:textSize="18sp" />
+            android:stretchColumns="0">
+
+            <TableRow>
+
+                <Button
+                    android:id="@+id/failThis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Click!"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/run30s"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="+30"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/stop"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="暂停"
+                    android:textSize="18sp" />
+            </TableRow>
+        </TableLayout>
     </RelativeLayout>
 </RelativeLayout>

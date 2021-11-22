@@ -16,7 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ImaginationMode"></activity>
+        <activity
+            android:name=".ListingComprehension"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ImaginationMode" />
         <activity
             android:name=".TimeRecordActivity"
             android:windowSoftInputMode="stateHidden" />
