@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class TimeRecordActivity extends AppCompatActivity {
 
     private RelativeLayout passTimeView;
@@ -49,11 +50,13 @@ public class TimeRecordActivity extends AppCompatActivity {
 
     private TextView timeView;
     private TextView another;
+    private TextView timeMo;
     private Button failThis;
 
     private Gson gson = new Gson();
     private TimeRecord timeRecord;
     private LocalTime localTime;
+    private LocalTime timeMoLocalTime = LocalTime.parse("09:00:00", DateTimeFormatter.ISO_LOCAL_TIME);
     private Timer timer;
 
     private volatile boolean flag = true;
@@ -70,19 +73,35 @@ public class TimeRecordActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             if (msg.what == 0) {
                 if (mock) {
-                    localTime = localTime.plusSeconds(150);
+                    localTime = localTime.plusSeconds(1);
+                    timeMoLocalTime = timeMoLocalTime.plusSeconds(1);
                     if (localTime.getSecond() == 0) {
                         timeView.setText(localTime.toString() + ":00");
+                        timeMo.setText(timeMoLocalTime.toString() + ":00");
                     } else {
                         timeView.setText(localTime.toString());
+                        timeMo.setText(timeMoLocalTime.toString());
                     }
-                    if (localTime.isAfter(LocalTime.of(0, 0, 0)) && localTime.isBefore(LocalTime.of(0, 30, 0))) {
-                        another.setText("Part One.");
-                    } else if (localTime.isAfter(LocalTime.of(0, 29, 59)) && localTime.isBefore(LocalTime.of(0, 55, 0))) {
+                    if (localTime.isAfter(LocalTime.of(0, 0, 0)) && localTime.isBefore(LocalTime.of(0, 10, 0))) {
+                        another.setText("分发试卷,监考老师核对准考信息,播送考规,调试耳机,填涂准考证号!");
                         passTimeView.setBackground(getResources().getDrawable(R.drawable.background_yellow));
-                        another.setText("Part Two.");
-                    } else if (localTime.isAfter(LocalTime.of(0, 54, 59)) && localTime.isBefore(LocalTime.of(2, 05, 0))) {
-                        another.setText("Part Three.");
+                    } else if (localTime.isAfter(LocalTime.of(0, 9, 59)) && localTime.isBefore(LocalTime.of(0, 35, 0))) {
+                        passTimeView.setBackground(getResources().getDrawable(R.drawable.background_green));
+                        another.setText("Part One Writing!");
+                    } else if (localTime.isAfter(LocalTime.of(0, 34, 59)) && localTime.isBefore(LocalTime.of(0, 40, 0))) {
+                        another.setText("带上耳机,准备开始听力!");
+                        passTimeView.setBackground(getResources().getDrawable(R.drawable.background_blue));
+                    } else if (localTime.isAfter(LocalTime.of(0, 39, 59)) && localTime.isBefore(LocalTime.of(0, 41, 0))) {
+                        another.setText("1分钟试音环节,宣读听力大纲.");
+                        passTimeView.setBackground(getResources().getDrawable(R.drawable.background_blue));
+                    } else if (localTime.isAfter(LocalTime.of(0, 40, 59)) && localTime.isBefore(LocalTime.of(1, 5, 0))) {
+                        another.setText("Part Two Listing Comprehension!");
+                        passTimeView.setBackground(getResources().getDrawable(R.drawable.background_purple));
+                    } else if (localTime.isAfter(LocalTime.of(1, 4, 59)) && localTime.isBefore(LocalTime.of(1, 10, 0))) {
+                        another.setText("回收答题卡Ⅰ,分发答题卡Ⅱ.考生填涂准考证号!");
+                        passTimeView.setBackground(getResources().getDrawable(R.drawable.background_blue));
+                    } else if (localTime.isAfter(LocalTime.of(1, 9, 59)) && localTime.isBefore(LocalTime.of(2, 20, 0))) {
+                        another.setText("Part Three Reading Comprehension!");
                         passTimeView.setBackground(getResources().getDrawable(R.drawable.background_pink));
                     } else {
                         another.setText("NED!");
@@ -136,6 +155,7 @@ public class TimeRecordActivity extends AppCompatActivity {
         failThis = findViewById(R.id.failThis);
         timeSettingView = findViewById(R.id.timeSettingView);
         another = findViewById(R.id.another);
+        timeMo = findViewById(R.id.timeMo);
         // 先读取到TimeRecord
         this.timeRecord = getTimeRecord();
         articleTime.setText(timeRecord.getArticle());
@@ -171,22 +191,28 @@ public class TimeRecordActivity extends AppCompatActivity {
             switch (radioGroup.getCheckedRadioButtonId()) {
                 case R.id.articleButton:
                     result = articleTime.getText().toString();
+                    timeMo.setText("");
                     break;
                 case R.id.cautiousButton:
                     result = cautiousReadTime.getText().toString();
+                    timeMo.setText("");
                     break;
                 case R.id.doubleCautiousButton:
                     result = doubleCautiousReadTime.getText().toString();
                     chooseDouble = true;
+                    timeMo.setText("");
                     break;
                 case R.id.translateButton:
                     result = translateTime.getText().toString();
+                    timeMo.setText("");
                     break;
                 case R.id.matchParagraphButton:
                     result = matchParagraphTime.getText().toString();
+                    timeMo.setText("");
                     break;
                 case R.id.matchWordButton:
                     result = matchWordTime.getText().toString();
+                    timeMo.setText("");
                     break;
                 case R.id.mockExamineButton:
                     mock = true;

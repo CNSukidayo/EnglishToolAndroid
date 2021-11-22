@@ -28,7 +28,11 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     public HomeRecyclerViewAdapter(File baseFile, Context context) {
         layoutInflater = LayoutInflater.from(context);
-        this.allJsonDaysFile = new File(baseFile, File.separator + EnglishToolProperties.json).listFiles();
+        if (baseFile.exists()) {
+            this.allJsonDaysFile = new File(baseFile, File.separator + EnglishToolProperties.json).listFiles();
+        } else {
+            this.allJsonDaysFile = new File[0];
+        }
         this.allChooseDaysButton = new HashMap<>(allJsonDaysFile.length);
     }
 
